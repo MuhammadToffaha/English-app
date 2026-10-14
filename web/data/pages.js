@@ -3,42 +3,66 @@ window.BOOK = {
  "title": "El-Moasser English · 4th Primary · First Term 2027",
  "units": [
   {
+   "id": "starter",
    "name": "Starter",
+   "ar": "مراجعة البداية",
+   "icon": "🎒",
    "from": 1,
    "to": 21
   },
   {
+   "id": "u1",
    "name": "Unit 1 · The Five Senses",
+   "ar": "الحواس الخمس",
+   "icon": "👂",
    "from": 22,
    "to": 65
   },
   {
+   "id": "u2",
    "name": "Unit 2 · My Community",
+   "ar": "مجتمعي",
+   "icon": "🏘️",
    "from": 66,
    "to": 110
   },
   {
+   "id": "u3",
    "name": "Unit 3 · Animals in Our World",
+   "ar": "الحيوانات",
+   "icon": "🦁",
    "from": 111,
    "to": 153
   },
   {
-   "name": "Review 1",
+   "id": "r1",
+   "name": "Review · Units 1–3",
+   "ar": "مراجعة",
+   "icon": "⭐",
    "from": 154,
    "to": 155
   },
   {
+   "id": "u4",
    "name": "Unit 4 · Egypt My Homeland",
+   "ar": "مصر وطني",
+   "icon": "🇪🇬",
    "from": 156,
    "to": 193
   },
   {
+   "id": "u5",
    "name": "Unit 5 · A Day at Work",
+   "ar": "يوم في العمل",
+   "icon": "👷",
    "from": 194,
    "to": 234
   },
   {
+   "id": "u6",
    "name": "Unit 6 · The Hundred Dresses",
+   "ar": "الفساتين المائة",
+   "icon": "👗",
    "from": 235,
    "to": 243
   }
@@ -203,7 +227,8 @@ window.BOOK = {
    {
     "w": "brush teeth",
     "ar": "يغسل أسنانه بالفرشاة",
-    "ex": "I brush my teeth every morning."
+    "ex": "I brush my teeth every morning.",
+    "img": "img/p29-brush-teeth.jpg"
    },
    {
     "w": "wash",
@@ -270,27 +295,32 @@ window.BOOK = {
    {
     "w": "taste",
     "ar": "حاسة التذوق",
-    "ex": "We taste with our tongue."
+    "ex": "We taste with our tongue.",
+    "img": "img/p23-taste.jpg"
    },
    {
     "w": "touch",
     "ar": "حاسة اللمس",
-    "ex": "We touch with our hands."
+    "ex": "We touch with our hands.",
+    "img": "img/p23-touch.jpg"
    },
    {
     "w": "hearing",
     "ar": "حاسة السمع",
-    "ex": "We use hearing to listen to music."
+    "ex": "We use hearing to listen to music.",
+    "img": "img/p23-hearing.jpg"
    },
    {
     "w": "sight",
     "ar": "حاسة الإبصار",
-    "ex": "Sight helps us see colors."
+    "ex": "Sight helps us see colors.",
+    "img": "img/p23-sight.jpg"
    },
    {
     "w": "smell",
     "ar": "حاسة الشم",
-    "ex": "I smell the flowers with my nose."
+    "ex": "I smell the flowers with my nose.",
+    "img": "img/p23-smell.jpg"
    },
    {
     "w": "fire",
@@ -347,37 +377,44 @@ window.BOOK = {
    {
     "w": "brush teeth",
     "ar": "يغسل الأسنان",
-    "ex": "I brush my teeth before bed."
+    "ex": "I brush my teeth before bed.",
+    "img": "img/p29-brush-teeth.jpg"
    },
    {
     "w": "wash face",
     "ar": "يغسل الوجه",
-    "ex": "I wash my face in the morning."
+    "ex": "I wash my face in the morning.",
+    "img": "img/p29-wash-face.jpg"
    },
    {
     "w": "wake up early",
     "ar": "يستيقظ مبكرًا",
-    "ex": "I wake up early on school days."
+    "ex": "I wake up early on school days.",
+    "img": "img/p29-wake-up-early.jpg"
    },
    {
     "w": "play sports",
     "ar": "يلعب رياضة",
-    "ex": "We play sports after school."
+    "ex": "We play sports after school.",
+    "img": "img/p29-play-sports.jpg"
    },
    {
     "w": "drink plenty of water",
     "ar": "يشرب الكثير من المياه",
-    "ex": "Drink plenty of water every day."
+    "ex": "Drink plenty of water every day.",
+    "img": "img/p29-drink-plenty-of-water.jpg"
    },
    {
     "w": "take a shower",
     "ar": "يستحم",
-    "ex": "I take a shower after football."
+    "ex": "I take a shower after football.",
+    "img": "img/p29-take-a-shower.jpg"
    },
    {
     "w": "do exercises",
     "ar": "يتدرب / يتمرن",
-    "ex": "My dad does exercises every morning."
+    "ex": "My dad does exercises every morning.",
+    "img": "img/p29-do-exercises.jpg"
    },
    {
     "w": "break time",
@@ -454,7 +491,8 @@ window.BOOK = {
    {
     "w": "smell",
     "ar": "رائحة / يشم",
-    "ex": "The food has a nice smell."
+    "ex": "The food has a nice smell.",
+    "img": "img/p23-smell.jpg"
    },
    {
     "w": "owner",
@@ -658,32 +696,38 @@ window.BOOK = {
    {
     "w": "clean",
     "ar": "ينظف / نظيف",
-    "ex": "We clean the classroom."
+    "ex": "We clean the classroom.",
+    "img": "img/p67-clean.jpg"
    },
    {
     "w": "plant",
     "ar": "يزرع",
-    "ex": "Let's plant a tree in the garden."
+    "ex": "Let's plant a tree in the garden.",
+    "img": "img/p67-plant.jpg"
    },
    {
     "w": "collect",
     "ar": "يجمع",
-    "ex": "We collect bottles from the park."
+    "ex": "We collect bottles from the park.",
+    "img": "img/p67-collect.jpg"
    },
    {
     "w": "help",
     "ar": "يساعد",
-    "ex": "I help my grandfather."
+    "ex": "I help my grandfather.",
+    "img": "img/p67-help.jpg"
    },
    {
     "w": "feed",
     "ar": "يطعم",
-    "ex": "She feeds the dog every day."
+    "ex": "She feeds the dog every day.",
+    "img": "img/p67-feed.jpg"
    },
    {
     "w": "volunteer",
     "ar": "يتطوع",
-    "ex": "I volunteer at the community park."
+    "ex": "I volunteer at the community park.",
+    "img": "img/p67-volunteer.jpg"
    },
    {
     "w": "trash",
@@ -1156,32 +1200,38 @@ window.BOOK = {
    {
     "w": "lion",
     "ar": "أسد",
-    "ex": "The lion is the king of the jungle."
+    "ex": "The lion is the king of the jungle.",
+    "img": "img/p112-lion.jpg"
    },
    {
     "w": "monkey",
     "ar": "قرد",
-    "ex": "The monkey eats a banana."
+    "ex": "The monkey eats a banana.",
+    "img": "img/p112-monkey.jpg"
    },
    {
     "w": "elephant",
     "ar": "فيل",
-    "ex": "The elephant is very big."
+    "ex": "The elephant is very big.",
+    "img": "img/p112-elephant.jpg"
    },
    {
     "w": "giraffe",
     "ar": "زرافة",
-    "ex": "The giraffe has a long neck."
+    "ex": "The giraffe has a long neck.",
+    "img": "img/p112-giraffe.jpg"
    },
    {
     "w": "zebra",
     "ar": "حمار وحشي",
-    "ex": "The zebra is black and white."
+    "ex": "The zebra is black and white.",
+    "img": "img/p112-zebra.jpg"
    },
    {
     "w": "bear",
     "ar": "دب",
-    "ex": "The bear likes honey."
+    "ex": "The bear likes honey.",
+    "img": "img/p112-bear.jpg"
    },
    {
     "w": "forest park",
@@ -1318,7 +1368,8 @@ window.BOOK = {
    {
     "w": "clean",
     "ar": "نظيف",
-    "ex": "Keep the cage clean."
+    "ex": "Keep the cage clean.",
+    "img": "img/p67-clean.jpg"
    },
    {
     "w": "special",
@@ -1405,17 +1456,20 @@ window.BOOK = {
    {
     "w": "footprints",
     "ar": "آثار الأقدام",
-    "ex": "I see footprints in the sand."
+    "ex": "I see footprints in the sand.",
+    "img": "img/p127-footprints.jpg"
    },
    {
     "w": "fluffy tail",
     "ar": "ذيل كثيف",
-    "ex": "The fox has a fluffy tail."
+    "ex": "The fox has a fluffy tail.",
+    "img": "img/p127-fluffy-tail.jpg"
    },
    {
     "w": "cave",
     "ar": "كهف",
-    "ex": "The old lion lived in a cave."
+    "ex": "The old lion lived in a cave.",
+    "img": "img/p127-cave.jpg"
    },
    {
     "w": "trick",
@@ -1659,17 +1713,20 @@ window.BOOK = {
    {
     "w": "hearing",
     "ar": "حاسة السمع",
-    "ex": "We use hearing to listen."
+    "ex": "We use hearing to listen.",
+    "img": "img/p23-hearing.jpg"
    },
    {
     "w": "sight",
     "ar": "حاسة الإبصار",
-    "ex": "Sight helps us see."
+    "ex": "Sight helps us see.",
+    "img": "img/p23-sight.jpg"
    },
    {
     "w": "smell",
     "ar": "حاسة الشم",
-    "ex": "I love the smell of bread."
+    "ex": "I love the smell of bread.",
+    "img": "img/p23-smell.jpg"
    },
    {
     "w": "fire",
@@ -1744,17 +1801,20 @@ window.BOOK = {
    {
     "w": "collect",
     "ar": "يجمع",
-    "ex": "We collect old books."
+    "ex": "We collect old books.",
+    "img": "img/p67-collect.jpg"
    },
    {
     "w": "feed",
     "ar": "يطعم",
-    "ex": "I feed the birds."
+    "ex": "I feed the birds.",
+    "img": "img/p67-feed.jpg"
    },
    {
     "w": "volunteer",
     "ar": "يتطوع",
-    "ex": "My sister likes to volunteer at the hospital."
+    "ex": "My sister likes to volunteer at the hospital.",
+    "img": "img/p67-volunteer.jpg"
    },
    {
     "w": "traffic",
@@ -1819,12 +1879,14 @@ window.BOOK = {
    {
     "w": "giraffe",
     "ar": "زرافة",
-    "ex": "The giraffe eats leaves."
+    "ex": "The giraffe eats leaves.",
+    "img": "img/p112-giraffe.jpg"
    },
    {
     "w": "zebra",
     "ar": "حمار وحشي",
-    "ex": "The zebra has black stripes."
+    "ex": "The zebra has black stripes.",
+    "img": "img/p112-zebra.jpg"
    },
    {
     "w": "leaves",
@@ -1854,7 +1916,8 @@ window.BOOK = {
    {
     "w": "cave",
     "ar": "كهف",
-    "ex": "The bear sleeps in a cave."
+    "ex": "The bear sleeps in a cave.",
+    "img": "img/p127-cave.jpg"
    },
    {
     "w": "vet",
@@ -1889,7 +1952,8 @@ window.BOOK = {
    {
     "w": "footprints",
     "ar": "آثار أقدام",
-    "ex": "The fox saw footprints."
+    "ex": "The fox saw footprints.",
+    "img": "img/p127-footprints.jpg"
    },
    {
     "w": "fluffy",
@@ -1926,32 +1990,38 @@ window.BOOK = {
    {
     "w": "Pyramids",
     "ar": "الأهرامات",
-    "ex": "The Pyramids are in Giza."
+    "ex": "The Pyramids are in Giza.",
+    "img": "img/p157-pyramids.jpg"
    },
    {
     "w": "Nile River",
     "ar": "نهر النيل",
-    "ex": "The Nile River is very long."
+    "ex": "The Nile River is very long.",
+    "img": "img/p157-nile-river.jpg"
    },
    {
     "w": "Cairo Tower",
     "ar": "برج القاهرة",
-    "ex": "We saw Cairo from the Cairo Tower."
+    "ex": "We saw Cairo from the Cairo Tower.",
+    "img": "img/p157-cairo-tower.jpg"
    },
    {
     "w": "Siwa Oasis",
     "ar": "واحة سيوة",
-    "ex": "Siwa Oasis has many palm trees."
+    "ex": "Siwa Oasis has many palm trees.",
+    "img": "img/p157-siwa-oasis.jpg"
    },
    {
     "w": "Egyptian Museum",
     "ar": "المتحف المصري",
-    "ex": "The Egyptian Museum has old treasures."
+    "ex": "The Egyptian Museum has old treasures.",
+    "img": "img/p157-egyptian-museum.jpg"
    },
    {
     "w": "Khan Al-Khalili Bazaar",
     "ar": "سوق خان الخليلي",
-    "ex": "We bought gifts from Khan Al-Khalili Bazaar."
+    "ex": "We bought gifts from Khan Al-Khalili Bazaar.",
+    "img": "img/p157-khan-al-khalili-bazaar.jpg"
    },
    {
     "w": "tour guide",
@@ -2053,32 +2123,38 @@ window.BOOK = {
    {
     "w": "library",
     "ar": "مكتبة",
-    "ex": "I borrow books from the library."
+    "ex": "I borrow books from the library.",
+    "img": "img/p162-library.jpg"
    },
    {
     "w": "school",
     "ar": "مدرسة",
-    "ex": "My school is near my house."
+    "ex": "My school is near my house.",
+    "img": "img/p162-school.jpg"
    },
    {
     "w": "hospital",
     "ar": "مستشفى",
-    "ex": "Doctors work in the hospital."
+    "ex": "Doctors work in the hospital.",
+    "img": "img/p162-hospital.jpg"
    },
    {
     "w": "post office",
     "ar": "مكتب البريد",
-    "ex": "We send letters from the post office."
+    "ex": "We send letters from the post office.",
+    "img": "img/p162-post-office.jpg"
    },
    {
     "w": "museum",
     "ar": "متحف",
-    "ex": "We saw old statues in the museum."
+    "ex": "We saw old statues in the museum.",
+    "img": "img/p162-museum.jpg"
    },
    {
     "w": "shopping mall",
     "ar": "مركز تجاري",
-    "ex": "The shopping mall has many stores."
+    "ex": "The shopping mall has many stores.",
+    "img": "img/p162-shopping-mall.jpg"
    },
    {
     "w": "packages",
@@ -2108,7 +2184,8 @@ window.BOOK = {
    {
     "w": "teacher",
     "ar": "معلم / معلمة",
-    "ex": "My teacher is kind."
+    "ex": "My teacher is kind.",
+    "img": "img/p195-teacher.jpg"
    },
    {
     "w": "restaurant",
@@ -2118,7 +2195,8 @@ window.BOOK = {
    {
     "w": "nurse",
     "ar": "ممرضة",
-    "ex": "The nurse gave me medicine."
+    "ex": "The nurse gave me medicine.",
+    "img": "img/p195-nurse.jpg"
    },
    {
     "w": "letters",
@@ -2344,32 +2422,38 @@ window.BOOK = {
    {
     "w": "doctor",
     "ar": "طبيب",
-    "ex": "The doctor helps sick people."
+    "ex": "The doctor helps sick people.",
+    "img": "img/p195-doctor.jpg"
    },
    {
     "w": "nurse",
     "ar": "ممرضة",
-    "ex": "The nurse works in a hospital."
+    "ex": "The nurse works in a hospital.",
+    "img": "img/p195-nurse.jpg"
    },
    {
     "w": "teacher",
     "ar": "معلمة",
-    "ex": "My teacher helps me learn."
+    "ex": "My teacher helps me learn.",
+    "img": "img/p195-teacher.jpg"
    },
    {
     "w": "engineer",
     "ar": "مهندس",
-    "ex": "The engineer designs buildings."
+    "ex": "The engineer designs buildings.",
+    "img": "img/p195-engineer.jpg"
    },
    {
     "w": "firefighter",
     "ar": "رجل إطفاء",
-    "ex": "The firefighter stops fires."
+    "ex": "The firefighter stops fires.",
+    "img": "img/p195-firefighter.jpg"
    },
    {
     "w": "police officer",
     "ar": "ضابط شرطة",
-    "ex": "The police officer keeps us safe."
+    "ex": "The police officer keeps us safe.",
+    "img": "img/p195-police-officer.jpg"
    },
    {
     "w": "vest",
@@ -2765,7 +2849,8 @@ window.BOOK = {
    {
     "w": "firefighter",
     "ar": "رجل إطفاء",
-    "ex": "The firefighter is a hero."
+    "ex": "The firefighter is a hero.",
+    "img": "img/p195-firefighter.jpg"
    },
    {
     "w": "stripes",
@@ -2872,57 +2957,68 @@ window.BOOK = {
    {
     "w": "dress",
     "ar": "فستان",
-    "ex": "Wanda wore a blue dress."
+    "ex": "Wanda wore a blue dress.",
+    "img": "img/p237-dress.jpg"
    },
    {
     "w": "closet",
     "ar": "خزانة (دولاب) ملابس",
-    "ex": "My clothes are in the closet."
+    "ex": "My clothes are in the closet.",
+    "img": "img/p237-closet.jpg"
    },
    {
     "w": "playground",
     "ar": "ملعب",
-    "ex": "We play in the playground."
+    "ex": "We play in the playground.",
+    "img": "img/p237-playground.jpg"
    },
    {
     "w": "competition",
     "ar": "مسابقة",
-    "ex": "Wanda won the drawing competition."
+    "ex": "Wanda won the drawing competition.",
+    "img": "img/p237-competition.jpg"
    },
    {
     "w": "announce",
     "ar": "يعلن",
-    "ex": "The teacher will announce the winner."
+    "ex": "The teacher will announce the winner.",
+    "img": "img/p237-announce.jpg"
    },
    {
     "w": "drawings",
     "ar": "رسومات",
-    "ex": "Wanda made a hundred drawings."
+    "ex": "Wanda made a hundred drawings.",
+    "img": "img/p237-drawings.jpg"
    },
    {
     "w": "sign",
     "ar": "توقيع / يوقع",
-    "ex": "Please sign your name on the drawing."
+    "ex": "Please sign your name on the drawing.",
+    "img": "img/p237-sign.jpg"
    },
    {
     "w": "letter",
     "ar": "خطاب",
-    "ex": "They wrote a letter to Wanda."
+    "ex": "They wrote a letter to Wanda.",
+    "img": "img/p237-letter.jpg"
    },
    {
     "w": "winner",
     "ar": "فائز",
-    "ex": "Wanda is the winner."
+    "ex": "Wanda is the winner.",
+    "img": "img/p237-winner.jpg"
    },
    {
     "w": "medal",
     "ar": "ميدالية",
-    "ex": "The winner gets a gold medal."
+    "ex": "The winner gets a gold medal.",
+    "img": "img/p237-medal.jpg"
    },
    {
     "w": "laugh",
     "ar": "يضحك",
-    "ex": "Don't laugh at other people."
+    "ex": "Don't laugh at other people.",
+    "img": "img/p237-laugh.jpg"
    },
    {
     "w": "faded",
@@ -2968,6 +3064,178 @@ window.BOOK = {
     "w": "apologize",
     "ar": "يعتذر",
     "ex": "They wanted to apologize to Wanda."
+   }
+  ],
+  "238": [
+   {
+    "w": "quiet",
+    "ar": "هادئ",
+    "ex": "Wanda was a quiet girl."
+   },
+   {
+    "w": "in the back",
+    "ar": "في الخلف",
+    "ex": "She sat in the back of the classroom."
+   },
+   {
+    "w": "dress",
+    "ar": "فستان",
+    "ex": "She wore the same blue dress.",
+    "img": "img/p237-dress.jpg"
+   },
+   {
+    "w": "despite",
+    "ar": "على الرغم من",
+    "ex": "Despite the rain, we played outside."
+   },
+   {
+    "w": "hundred",
+    "ar": "مائة",
+    "ex": "There are a hundred books in the library."
+   },
+   {
+    "w": "lined up",
+    "ar": "يصطف",
+    "ex": "The students lined up in the yard."
+   },
+   {
+    "w": "closet",
+    "ar": "خزانة ملابس",
+    "ex": "Her dresses are in the closet.",
+    "img": "img/p237-closet.jpg"
+   }
+  ],
+  "239": [
+   {
+    "w": "annoyed",
+    "ar": "ضايق / أزعج",
+    "ex": "The girls annoyed Wanda every morning."
+   },
+   {
+    "w": "playground",
+    "ar": "ملعب",
+    "ex": "We play in the playground at break time.",
+    "img": "img/p237-playground.jpg"
+   },
+   {
+    "w": "quiet",
+    "ar": "هادئ / صامت",
+    "ex": "Please be quiet in the library."
+   },
+   {
+    "w": "friendship",
+    "ar": "صداقة",
+    "ex": "Friendship is very important."
+   },
+   {
+    "w": "laughing",
+    "ar": "يضحك",
+    "ex": "The children were laughing at the clown."
+   }
+  ],
+  "240": [
+   {
+    "w": "announced",
+    "ar": "أعلنت",
+    "ex": "The teacher announced the winner."
+   },
+   {
+    "w": "annual",
+    "ar": "سنوي",
+    "ex": "We have an annual school trip."
+   },
+   {
+    "w": "competition",
+    "ar": "مسابقة",
+    "ex": "I won the drawing competition.",
+    "img": "img/p237-competition.jpg"
+   },
+   {
+    "w": "covered with",
+    "ar": "مغطى بـ",
+    "ex": "The walls were covered with drawings."
+   },
+   {
+    "w": "drawings",
+    "ar": "رسومات",
+    "ex": "Her drawings are beautiful.",
+    "img": "img/p237-drawings.jpg"
+   },
+   {
+    "w": "medal",
+    "ar": "ميدالية",
+    "ex": "He got a gold medal.",
+    "img": "img/p237-medal.jpg"
+   }
+  ],
+  "241": [
+   {
+    "w": "letter",
+    "ar": "خطاب",
+    "ex": "I wrote a letter to my friend.",
+    "img": "img/p237-letter.jpg"
+   },
+   {
+    "w": "moved",
+    "ar": "انتقل",
+    "ex": "Wanda's family moved to a big city."
+   },
+   {
+    "w": "unkindness",
+    "ar": "قسوة",
+    "ex": "Unkindness makes people sad."
+   },
+   {
+    "w": "terrible",
+    "ar": "بالأسى / فظيع",
+    "ex": "They felt terrible about it."
+   },
+   {
+    "w": "dreams",
+    "ar": "أحلام",
+    "ex": "Her drawings were her dreams."
+   },
+   {
+    "w": "apologize",
+    "ar": "يعتذر",
+    "ex": "We need to apologize to Wanda."
+   }
+  ],
+  "242": [
+   {
+    "w": "received",
+    "ar": "استلم",
+    "ex": "Wanda received the letter."
+   },
+   {
+    "w": "keep",
+    "ar": "يحتفظ",
+    "ex": "I want you to keep my drawings."
+   },
+   {
+    "w": "experience",
+    "ar": "تجربة",
+    "ex": "The trip was a great experience."
+   },
+   {
+    "w": "kindness",
+    "ar": "لطف",
+    "ex": "Kindness matters more than clothes."
+   },
+   {
+    "w": "expensive",
+    "ar": "غالي الثمن",
+    "ex": "Her shoes are expensive."
+   },
+   {
+    "w": "promised",
+    "ar": "وعد",
+    "ex": "They promised to help her."
+   },
+   {
+    "w": "bullying",
+    "ar": "التنمر",
+    "ex": "We must stop bullying."
    }
   ]
  }

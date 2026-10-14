@@ -7,10 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Fredoka:wght@500;600&display=swap">
 <style>
-/* Layout: notebook page; big page-number pad on top, word cards below (2 columns on tablets) */
+/* Layout: notebook page. Sticky top bar (home · page pad · settings), then one of four views: home / unit / page / settings */
 :root{
   --paper:#fbfaf4; --line:#dce6f3; --margin:#e46a6a; --ink:#1f2a44; --muted:#5d6782;
-  --blue:#2f6fde; --sun:#ffcf3f; --card:#ffffff; --green:#2e9b5e;
+  --blue:#2f6fde; --sun:#ffcf3f; --card:#ffffff; --green:#2e9b5e; --shade:rgba(31,42,68,.55);
   --ar:"Baloo Bhaijaan 2","Noto Naskh Arabic","Segoe UI",Tahoma,sans-serif;
   --en:"Fredoka","Baloo Bhaijaan 2",Roboto,system-ui,sans-serif;
   color-scheme:light;
@@ -20,80 +20,190 @@
 html,body{margin:0;min-height:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--ar);font-size:18px;line-height:1.55;
   background-image:repeating-linear-gradient(to bottom,transparent 0 33px,var(--line) 33px 34px);
-  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;
+  padding-top:env(safe-area-inset-top,0px);box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.topin{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;padding-block:8px;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.tbtn{width:56px;height:56px;border-radius:18px;border:none;background:rgba(255,255,255,.18);color:#fff;font-size:1.7rem;flex:none}
+.tbtn.on{background:var(--sun);color:var(--ink)}
+.ttl{flex:1;min-width:0;text-align:center;font-weight:800;font-size:1.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
 .wrap{max-width:1100px;margin:0 auto;padding-block:16px 80px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;flex-direction:column;gap:16px}
-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-h1{margin:0;font-size:1.8rem;font-weight:800;line-height:1.2}
-.unit{font-family:var(--en);font-weight:600;color:var(--blue);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:2px 14px;font-size:1rem}
+
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+h2{margin:0;font-size:1.4rem;line-height:1.3;text-wrap:balance}
+.sub{margin:0;color:var(--muted)}
+
+/* home */
+.findbig{display:flex;align-items:center;justify-content:center;gap:14px;background:var(--card);border:4px solid var(--blue);
+  border-radius:26px;padding:16px;font-size:1.5rem;font-weight:800;width:100%}
+.findbig span.n{font:600 2.2rem var(--en);color:var(--blue)}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px}
+.ucard{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px;text-align:right;
+  display:grid;grid-template-columns:auto 1fr;gap:2px 14px;align-items:center}
+.ucard .ic{font-size:2.6rem;grid-row:1/4}
+.ucard b{font:600 1.15rem var(--en);direction:ltr;text-align:right}
+.ucard .uar{color:var(--muted)}
+.ucard .cnt{font-size:.95rem;color:var(--blue);font-weight:700}
+.ucard.last{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
+
+/* pager */
 .pager{display:flex;align-items:center;justify-content:center;gap:14px}
-.arrow{width:72px;height:72px;border-radius:50%;border:none;background:var(--blue);color:#fff;font-size:2rem;cursor:pointer;flex:none}
-.pnum{min-width:180px;height:88px;border-radius:24px;border:4px solid var(--blue);background:var(--card);color:var(--ink);
-  font:600 3rem var(--en);cursor:pointer;font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center;gap:10px}
+.arrow{width:68px;height:68px;border-radius:50%;border:none;background:var(--blue);color:#fff;font-size:1.9rem;flex:none}
+.pnum{min-width:170px;height:84px;border-radius:24px;border:4px solid var(--blue);background:var(--card);
+  font:600 2.8rem var(--en);font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center;gap:10px}
 .pnum small{font:700 1rem var(--ar);color:var(--muted)}
-button:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+.unitlink{align-self:center;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:4px 16px;font:600 1rem var(--en);color:var(--blue)}
+
+/* word list */
 .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.bar h2{margin:0;font-size:1.3rem}
-.big{background:var(--sun);color:var(--ink);border:none;border-radius:18px;padding:10px 20px;font:800 1.15rem var(--ar);cursor:pointer}
+.big{background:var(--sun);color:var(--ink);border:none;border-radius:18px;padding:10px 20px;font:800 1.15rem var(--ar)}
 .big.stop{background:var(--margin);color:#fff}
-.grid{direction:ltr;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
-.w{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:14px 16px;display:grid;
-  grid-template-columns:auto 1fr auto;gap:2px 14px;align-items:center;transition:box-shadow .2s,border-color .2s}
-.w.on{border-color:var(--sun);box-shadow:0 0 0 5px var(--sun)}
-.n{font:600 1rem var(--en);color:var(--muted);min-width:1.6em;text-align:center}
-.word{font:600 2rem var(--en);direction:ltr;text-align:left;min-width:0;overflow-wrap:anywhere;line-height:1.2}
-.ar{grid-column:2/3;color:var(--muted);font-size:1.05rem;direction:rtl;text-align:left}
-.spk{width:64px;height:64px;border-radius:50%;border:none;background:var(--sun);font-size:1.9rem;cursor:pointer;grid-row:1/3;grid-column:3}
-.ex{grid-column:1/-1;display:flex;gap:10px;align-items:center;border-top:2px dashed var(--line);margin-top:8px;padding-top:8px}
-.ex p{margin:0;flex:1;min-width:0;direction:ltr;text-align:left;font:500 1.25rem var(--en)}
-.ex mark{background:var(--sun);color:var(--ink);border-radius:5px;padding:0 4px}
-.spk2{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:1.4rem;cursor:pointer;flex:none}
-.empty{background:var(--card);border:3px dashed var(--line);border-radius:22px;padding:28px 18px;text-align:center;font-size:1.25rem;display:flex;flex-direction:column;gap:12px;align-items:center}
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.chip{font:600 1.1rem var(--en);min-width:56px;padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:600 1.05rem var(--en);min-width:56px;padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:var(--card)}
 .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
-details.units{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px 16px}
-details.units summary{cursor:pointer;font-weight:800;font-size:1.15rem}
-.ublock{margin-top:12px}
-.ublock h3{margin:0 0 6px;font:600 1.05rem var(--en);color:var(--blue);direction:ltr;text-align:left}
-.ublock .chips{justify-content:flex-start;direction:ltr}
+.pghead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding-bottom:4px;border-bottom:3px dashed var(--line)}
+.pghead h3{margin:0;font-size:1.2rem}
+.grid{direction:ltr;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,430px),1fr));gap:14px}
+.w{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px 14px;display:grid;
+  grid-template-columns:auto auto 1fr auto;gap:2px 12px;align-items:center;transition:box-shadow .2s,border-color .2s}
+.w.on{border-color:var(--sun);box-shadow:0 0 0 5px var(--sun)}
+.n{font:600 1rem var(--en);color:var(--muted);min-width:1.4em;text-align:center;grid-row:1/3}
+.pic{width:84px;height:68px;border-radius:14px;object-fit:cover;grid-row:1/3;background:var(--line)}
+.nopic{width:0;height:0;grid-row:1/3}
+.word{font:600 1.9rem var(--en);text-align:left;min-width:0;overflow-wrap:anywhere;line-height:1.2}
+.ar{grid-column:3/4;color:var(--muted);font-size:1.05rem;direction:rtl;text-align:left}
+.spk{width:62px;height:62px;border-radius:50%;border:none;background:var(--sun);font-size:1.8rem;grid-row:1/3;grid-column:4}
+.ex{grid-column:1/-1;display:flex;gap:10px;align-items:center;border-top:2px dashed var(--line);margin-top:8px;padding-top:8px}
+.ex p{margin:0;flex:1;min-width:0;text-align:left;font:500 1.22rem var(--en)}
+.ex mark{background:var(--sun);color:var(--ink);border-radius:5px;padding:0 4px}
+.spk2{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:1.4rem;flex:none}
+.empty{background:var(--card);border:3px dashed var(--line);border-radius:22px;padding:28px 18px;text-align:center;font-size:1.2rem;display:flex;flex-direction:column;gap:12px;align-items:center}
+.hideAr .ar{display:none}.hideEx .ex{display:none}.hideImg .pic{display:none}
+
+/* settings */
+.panel{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.panel h3{margin:0;font-size:1.2rem}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.row label{font-weight:700;min-width:7em}
+.rg{direction:ltr;display:flex;align-items:center;gap:8px;flex:1;min-width:220px}
+input[type=range]{direction:ltr;flex:1;min-width:120px;accent-color:var(--blue);height:36px}
+.val{direction:ltr;font:600 1.1rem var(--en);min-width:3.5em;text-align:center;background:var(--paper);border-radius:10px;padding:2px 8px}
+select{font:500 1rem var(--en);padding:8px;border-radius:12px;border:2px solid var(--line);background:var(--paper);color:var(--ink);max-width:100%;flex:1;min-width:0}
+.seg{display:flex;border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.seg button{border:none;background:var(--paper);padding:8px 18px;font-weight:700;font-size:1.05rem}
+.seg button.on{background:var(--blue);color:#fff}
+.tog{display:flex;align-items:center;gap:10px;font-weight:700}
+.tog input{width:26px;height:26px;accent-color:var(--blue)}
+.btn{border:none;border-radius:14px;padding:10px 18px;font-weight:800;font-size:1.05rem;background:var(--blue);color:#fff}
+.btn.ghost{background:var(--paper);color:var(--ink);border:2px solid var(--line)}
+.btn.green{background:var(--green)}
+.note{margin:0;color:var(--muted);font-size:.95rem}
+.status{margin:0;font-weight:700}
+.bar2{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar2 i{display:block;height:100%;width:0;background:var(--green);transition:width .2s}
+a.lnk{color:var(--blue);font-weight:800}
+
 /* keypad */
-.pad{position:fixed;inset:0;background:rgba(31,42,68,.55);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}
+.pad{position:fixed;inset:0;background:var(--shade);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}
 .padbox{background:var(--paper);border-radius:28px;padding:18px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px}
 .padshow{height:84px;border-radius:20px;border:4px solid var(--blue);background:var(--card);font:600 3rem var(--en);display:flex;align-items:center;justify-content:center;direction:ltr}
 .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;direction:ltr}
-.keys button{height:76px;border-radius:20px;border:2px solid var(--line);background:var(--card);font:600 2rem var(--en);color:var(--ink);cursor:pointer}
+.keys button{height:76px;border-radius:20px;border:2px solid var(--line);background:var(--card);font:600 2rem var(--en)}
 .keys .ok{background:var(--green);color:#fff;border-color:var(--green)}
 .keys .del{background:var(--margin);color:#fff;border-color:var(--margin)}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:14px;font-size:1rem;z-index:20;max-width:90vw}
-.update{background:var(--green);color:#fff;border-radius:18px;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.update a{color:var(--ink);background:var(--sun);padding:8px 16px;border-radius:12px;text-decoration:none;font-weight:800}
-@media (max-width:520px){.word{font-size:1.6rem}.pnum{min-width:130px;font-size:2.4rem}.arrow{width:60px;height:60px}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:14px;z-index:20;max-width:90vw;text-align:center}
+.banner{background:var(--green);color:#fff;border-radius:18px;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:700}
+.banner button{background:var(--sun);color:var(--ink);border:none;border-radius:12px;padding:8px 16px;font-weight:800}
+@media (max-width:560px){.word{font-size:1.5rem}.pic{width:64px;height:54px}.pnum{min-width:120px;font-size:2.2rem}.arrow{width:56px;height:56px}.spk{width:54px;height:54px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="update" id="apkUpdate" hidden><span>🆕 في نسخة جديدة من التطبيق</span><a id="apkLink" href="#">⬇️ نزّلها</a></div>
-  <header>
-    <h1>📖 كلمات كتابي</h1>
-    <span class="unit" id="unitLabel"></span>
-  </header>
-
-  <div class="pager">
-    <button class="arrow" id="prev" aria-label="الصفحة اللي قبل">→</button>
-    <button class="pnum" id="pnum" aria-label="اكتب رقم الصفحة"><small>صفحة</small><span id="pnumVal">–</span></button>
-    <button class="arrow" id="next" aria-label="الصفحة اللي بعد">←</button>
+<header class="top">
+  <div class="topin">
+    <button class="tbtn" id="homeBtn" aria-label="الرئيسية">🏠</button>
+    <button class="tbtn" id="padBtn" aria-label="ابحث برقم الصفحة">🔢</button>
+    <div class="ttl" id="ttl">📖 كلمات كتابي</div>
+    <button class="tbtn" id="setBtn" aria-label="الإعدادات">⚙️</button>
   </div>
+</header>
 
-  <section id="result" aria-live="polite"></section>
+<main class="wrap">
+  <div class="banner" id="apkBanner" hidden><span>🆕 في نسخة جديدة من التطبيق</span><button id="apkBannerBtn">⬇️ حدّث</button></div>
 
-  <details class="units" id="units">
-    <summary>📚 كل الصفحات اللي فيها كلمات</summary>
-    <div id="unitList"></div>
-  </details>
-</div>
+  <!-- HOME -->
+  <section id="vHome" class="stack">
+    <button class="findbig" id="findBig">🔢 اكتب رقم الصفحة <span class="n">#</span></button>
+    <h2>📚 اختار الوحدة</h2>
+    <div class="units" id="units"></div>
+  </section>
+
+  <!-- UNIT -->
+  <section id="vUnit" hidden>
+    <div class="stack">
+      <div class="bar"><h2 id="unitTitle"></h2><button class="big" id="unitReadAll">🔊 اقرأ الوحدة</button></div>
+      <div class="chips" id="unitChips"></div>
+      <div id="unitList"></div>
+    </div>
+  </section>
+
+  <!-- PAGE -->
+  <section id="vPage" hidden>
+    <div class="stack">
+      <div class="pager">
+        <button class="arrow" id="prev" aria-label="الصفحة اللي قبل">→</button>
+        <button class="pnum" id="pnum" aria-label="اكتب رقم الصفحة"><small>صفحة</small><span id="pnumVal">–</span></button>
+        <button class="arrow" id="next" aria-label="الصفحة اللي بعد">←</button>
+      </div>
+      <button class="unitlink" id="unitLink"></button>
+      <div id="pageBody"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="vSet" hidden>
+    <div class="stack">
+      <h2>⚙️ الإعدادات</h2>
+
+      <div class="panel">
+        <h3>🗣️ الصوت</h3>
+        <div class="row"><label for="rate">⚡ السرعة</label><span class="rg"><span aria-hidden="true">🐢</span><input type="range" id="rate" min="0.4" max="1.3" step="0.05"><span aria-hidden="true">🐇</span></span><span class="val" id="rateVal"></span></div>
+        <div class="row"><label for="pitch">🎵 طبقة الصوت</label><span class="rg"><span aria-hidden="true">🔉</span><input type="range" id="pitch" min="0.6" max="1.4" step="0.05"><span aria-hidden="true">🔊</span></span><span class="val" id="pitchVal"></span></div>
+        <div class="row"><label>👤 نوع الصوت</label>
+          <div class="seg" id="gender"><button data-g="male">👨 رجالي</button><button data-g="female">👩 حريمي</button></div>
+        </div>
+        <div class="row"><label for="voiceSel">🎙️ الصوت</label><select id="voiceSel"></select></div>
+        <p class="note" id="voiceNote"></p>
+        <div class="row"><button class="btn" id="testVoice">▶️ جرّب: Hello, how are you?</button><button class="btn ghost" id="resetVoice">↩️ الافتراضي</button></div>
+      </div>
+
+      <div class="panel">
+        <h3>👀 العرض</h3>
+        <label class="tog"><input type="checkbox" id="optImg"> 🖼️ صور الكلمات</label>
+        <label class="tog"><input type="checkbox" id="optAr"> 🔤 المعنى بالعربي</label>
+        <label class="tog"><input type="checkbox" id="optEx"> 💬 الأمثلة</label>
+      </div>
+
+      <div class="panel">
+        <h3>🔄 التحديثات</h3>
+        <p class="note" id="verInfo"></p>
+        <div class="row"><button class="btn green" id="checkUpd">🔄 دوّر على تحديث</button></div>
+        <p class="status" id="updStatus"></p>
+        <div class="bar2" id="updBar" hidden><i></i></div>
+        <div class="row"><button class="btn" id="installUpd" hidden>⬇️ نزّل وثبّت النسخة الجديدة</button></div>
+        <p class="note">الكلمات والشكل بيتحدّثوا لوحدهم كل ما التطبيق يتفتح. النسخة الجديدة من التطبيق نفسه محتاجة تثبيت.</p>
+      </div>
+    </div>
+  </section>
+</main>
 
 <div class="pad" id="pad" hidden>
   <div class="padbox">
@@ -107,43 +217,83 @@ details.units summary{cursor:pointer;font-weight:800;font-size:1.15rem}
 (function(){
   var $ = function(id){return document.getElementById(id)};
   var BOOK = window.BOOK || {pages:{},units:[]};
-  var PAGES = BOOK.pages || {};
+  var PAGES = BOOK.pages || {}, UNITS = BOOK.units || [];
   var nums = Object.keys(PAGES).map(Number).filter(function(n){return PAGES[n] && PAGES[n].length}).sort(function(a,b){return a-b});
-  var current = null, reading = false;
+  var RELEASES = "https://github.com/MuhammadToffaha/English-app/releases/latest/download/kalimat.apk";
+  var native = window.AndroidTTS || null;
+  function has(fn){ return !!(native && typeof native[fn] === "function"); }
 
-  // ---------- speech: Android native TTS first, browser voice second ----------
-  var native = window.AndroidTTS;
-  var doneCb = null;
-  window.__ttsDone = function(){ var f = doneCb; doneCb = null; if(f) f(); };
-  var voice = null;
-  function pickVoice(){
-    if(!window.speechSynthesis) return;
-    var vs = speechSynthesis.getVoices().filter(function(v){return /en[-_]US/i.test(v.lang)});
-    var pref = ["Samantha","Google US English","Microsoft Aria","Microsoft Jenny","Allison","Ava"];
-    vs.sort(function(a,b){return rank(b)-rank(a)});
-    function rank(v){for(var i=0;i<pref.length;i++) if(v.name.indexOf(pref[i])>=0) return 10-i; return 0}
-    voice = vs[0] || null;
+  // ---------- settings ----------
+  var DEF = {rate:0.8, pitch:1, gender:"male", voice:"", img:true, ar:true, ex:true};
+  var S = Object.assign({}, DEF);
+  try{ Object.assign(S, JSON.parse(localStorage.getItem("settings")||"{}")); }catch(e){}
+  function saveS(){ try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} applyView(); }
+  function applyView(){
+    document.body.classList.toggle("hideImg", !S.img);
+    document.body.classList.toggle("hideAr", !S.ar);
+    document.body.classList.toggle("hideEx", !S.ex);
   }
-  if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  applyView();
+
+  // ---------- voices ----------
+  var MALE = /(^|[^a-z])(male|man)\b|iol|iom|tpd|smtm|david|guy|alex|fred|daniel|mark|james|aaron|ryan|tom|eric|christopher|roger|steffan|brian|davis|tony|jason/i;
+  var FEMALE = /female|woman|iob|iog|sfg|tpc|tpf|smtf|samantha|zira|aria|jenny|allison|ava|susan|karen|moira|tessa|victoria|joanna|salli|kimberly|ivy|emma|michelle|ana|sara/i;
+  function guessMale(name){ return MALE.test(name) && !/female/i.test(name); }
+  function listVoices(){
+    var out=[];
+    if(has("voices")){
+      try{ out = JSON.parse(native.voices()||"[]").map(function(v){ return {name:v.name, label:v.label||v.name, male:("male" in v)?!!v.male:guessMale(v.name)}; }); }catch(e){}
+    } else if(window.speechSynthesis){
+      out = speechSynthesis.getVoices().filter(function(v){return /en[-_]US/i.test(v.lang)})
+        .map(function(v){ return {name:v.name, label:v.name, male:guessMale(v.name) && !FEMALE.test(v.name)}; });
+    }
+    return out;
+  }
+  function pickVoice(){
+    var vs = listVoices();
+    if(S.voice && vs.some(function(v){return v.name===S.voice})) return S.voice;
+    var want = vs.filter(function(v){ return S.gender==="male" ? v.male : !v.male; });
+    return (want[0] || vs[0] || {}).name || "";
+  }
+  var browserVoice = null;
+  function refreshBrowserVoice(){
+    if(!window.speechSynthesis) return;
+    var n = pickVoice(); browserVoice = speechSynthesis.getVoices().filter(function(v){return v.name===n})[0] || null;
+  }
+  if(!native && window.speechSynthesis){ refreshBrowserVoice(); speechSynthesis.onvoiceschanged = function(){ refreshBrowserVoice(); if(!$("vSet").hidden) fillVoices(); }; }
+  function applyNativeVoice(){ if(has("setVoice")){ try{ native.setVoice(pickVoice()); }catch(e){} } }
+  applyNativeVoice();
+
+  // when the chosen voice cannot sound male, a lower pitch gets close
+  function effPitch(){
+    var vs=listVoices(), cur=pickVoice(), v=vs.filter(function(x){return x.name===cur})[0];
+    var p = S.pitch;
+    if(S.gender==="male" && (!v || !v.male) && p >= 1) p = 0.8;
+    return p;
+  }
+
+  // ---------- speech ----------
+  var doneCb = null, reading = false;
+  window.__ttsDone = function(){ var f = doneCb; doneCb = null; if(f) f(); };
   function speakable(t){ return String(t).replace(/\s*\/\s*/g,", ").replace(/\s*=\s*/g,", ").replace(/\.\.\.|…/g," ").replace(/\+/g," ").replace(/\s+/g," ").trim(); }
-  function say(text, slow){
+  function say(text){
     text = speakable(text);
     return new Promise(function(res){
-      var rate = slow ? 0.75 : 0.9;
       if(native){
         doneCb = res;
-        try{ native.speak(String(text), rate); }catch(e){ doneCb=null; res(); }
+        try{ native.speak(text, S.rate, effPitch()); }
+        catch(e){ try{ native.speak(text, S.rate); }catch(e2){ doneCb=null; res(); } }
         setTimeout(function(){ if(doneCb===res){ doneCb=null; res(); } }, 15000);
         return;
       }
       if(!window.speechSynthesis){ toast("الجهاز ده مبيدعمش النطق"); return res(); }
       var u = new SpeechSynthesisUtterance(text);
-      u.lang = "en-US"; if(voice) u.voice = voice; u.rate = rate;
+      u.lang="en-US"; if(browserVoice) u.voice=browserVoice; u.rate=S.rate; u.pitch=effPitch();
       u.onend = u.onerror = function(){res()};
       speechSynthesis.speak(u);
     });
   }
-  function stopSpeech(){ reading=false; doneCb=null; if(native){try{native.stop()}catch(e){}} else if(window.speechSynthesis) speechSynthesis.cancel(); }
+  function stopSpeech(){ reading=false; doneCb=null; if(native){try{native.stop()}catch(e){}} else if(window.speechSynthesis) speechSynthesis.cancel(); resetReadBtns(); }
   function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
   // ---------- helpers ----------
@@ -158,111 +308,237 @@ details.units summary{cursor:pointer;font-weight:800;font-size:1.15rem}
     }
     return e;
   }
-  function unitOf(n){ var u=(BOOK.units||[]).filter(function(u){return n>=u.from && n<=u.to})[0]; return u?u.name:""; }
-  var tt; function toast(t){ var d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); clearTimeout(tt); tt=setTimeout(function(){d.remove()},2500); }
-  function save(n){ try{localStorage.setItem("page",n)}catch(e){} }
+  function unitOf(n){ return UNITS.filter(function(u){return n>=u.from && n<=u.to})[0] || null; }
+  function pagesOf(u){ return nums.filter(function(n){return n>=u.from && n<=u.to}); }
+  var tt; function toast(t){ var d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); clearTimeout(tt); tt=setTimeout(function(){d.remove()},2600); }
+  function store(k,v){ try{localStorage.setItem(k,v)}catch(e){} }
+  function load(k){ try{return localStorage.getItem(k)}catch(e){return null} }
+
+  function wordList(words){
+    var ol=document.createElement("ol"); ol.className="grid";
+    words.forEach(function(w,i){
+      var li=document.createElement("li"); li.className="w";
+      li.innerHTML='<span class="n">'+(i+1)+'</span>'+
+        (w.img?'<img class="pic" loading="lazy" alt="" src="'+esc(w.img)+'">':'<span class="nopic"></span>')+
+        '<span class="word">'+esc(w.w)+'</span>'+
+        '<button class="spk" aria-label="انطق">🔊</button>'+
+        (w.ar?'<span class="ar">'+esc(w.ar)+'</span>':'')+
+        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'');
+      li.querySelector(".spk").onclick=function(){ stopSpeech(); flash(li); say(w.w); };
+      var pic=li.querySelector(".pic"); if(pic){ pic.onclick=function(){ stopSpeech(); flash(li); say(w.w); }; pic.onerror=function(){ pic.remove(); }; }
+      var b2=li.querySelector(".spk2"); if(b2) b2.onclick=function(){ stopSpeech(); flash(li); say(w.ex); };
+      li._w=w; ol.appendChild(li);
+    });
+    return ol;
+  }
+  function flash(li){ document.querySelectorAll(".w.on").forEach(function(x){x.classList.remove("on")}); li.classList.add("on"); setTimeout(function(){li.classList.remove("on")},1600); }
+  var readBtns=[];
+  function resetReadBtns(){ readBtns.forEach(function(b){ b.textContent=b._label; b.classList.remove("stop"); }); }
+  function makeReadBtn(btn, label, scope){
+    btn._label=label; btn.textContent=label; if(readBtns.indexOf(btn)<0) readBtns.push(btn);
+    btn.onclick=async function(){
+      if(reading){ stopSpeech(); return; }
+      reading=true; btn.textContent="⏹️ وقّف"; btn.classList.add("stop");
+      var items=[].slice.call(scope().querySelectorAll(".w"));
+      for(var i=0;i<items.length && reading;i++){
+        var li=items[i], w=li._w;
+        li.classList.add("on"); li.scrollIntoView({block:"center",behavior:"smooth"});
+        await say(w.w); await wait(450);
+        if(reading && w.ex && S.ex){ await say(w.ex); await wait(650); }
+        li.classList.remove("on");
+      }
+      reading=false; resetReadBtns();
+    };
+  }
+
+  // ---------- views ----------
+  var view="home";
+  function go(v){
+    stopSpeech(); view=v;
+    ["Home","Unit","Page","Set"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
+    $("homeBtn").classList.toggle("on", v==="home");
+    $("setBtn").classList.toggle("on", v==="set");
+    window.scrollTo(0,0);
+  }
+
+  function renderHome(){
+    var box=$("units"); box.innerHTML="";
+    var last=load("unit");
+    UNITS.forEach(function(u){
+      var ps=pagesOf(u); if(!ps.length) return;
+      var count=ps.reduce(function(s,p){return s+PAGES[p].length},0);
+      var b=document.createElement("button"); b.className="ucard"+(u.id===last?" last":"");
+      b.innerHTML='<span class="ic">'+u.icon+'</span><b>'+esc(u.name)+'</b><span class="uar">'+esc(u.ar)+'</span><span class="cnt">'+count+' كلمة · '+ps.length+' صفحة</span>';
+      b.onclick=function(){ showUnit(u.id); };
+      box.appendChild(b);
+    });
+    $("ttl").textContent="📖 كلمات كتابي";
+    go("home");
+  }
+
+  function showUnit(id, focusPage){
+    var u=UNITS.filter(function(x){return x.id===id})[0]; if(!u) return renderHome();
+    store("unit", id);
+    $("unitTitle").textContent=u.icon+" "+u.name;
+    $("ttl").textContent=u.ar;
+    var chips=$("unitChips"); chips.innerHTML="";
+    var list=$("unitList"); list.innerHTML="";
+    pagesOf(u).forEach(function(p){
+      var c=document.createElement("button"); c.className="chip"; c.textContent="📄 "+p;
+      c.onclick=function(){ showPage(p); }; chips.appendChild(c);
+      var head=document.createElement("div"); head.className="pghead"; head.id="up-"+p;
+      head.innerHTML='<h3>📄 صفحة '+p+'</h3>';
+      var open=document.createElement("button"); open.className="chip"; open.textContent="افتح الصفحة ←";
+      open.onclick=function(){ showPage(p); }; head.appendChild(open);
+      list.appendChild(head); list.appendChild(wordList(PAGES[p]));
+    });
+    makeReadBtn($("unitReadAll"), "🔊 اقرأ الوحدة", function(){return $("unitList")});
+    go("unit");
+    if(focusPage){ var el=$("up-"+focusPage); if(el) el.scrollIntoView(); }
+  }
+
+  var current=null;
   function nearest(n){
     var before=null, after=null;
     nums.forEach(function(x){ if(x<n) before=x; if(x>n && after===null) after=x; });
     return [before,after].filter(function(x){return x!==null});
   }
-
-  // ---------- render ----------
-  function show(n){
-    n = parseInt(n,10); if(!n || n<1) return;
-    stopSpeech();
-    current = n; save(n);
-    $("pnumVal").textContent = n;
-    $("unitLabel").textContent = unitOf(n);
-    $("unitLabel").hidden = !unitOf(n);
-    var res = $("result"); res.innerHTML = "";
-    var words = PAGES[n];
-    if(!words || !words.length){
-      var box = document.createElement("div"); box.className="empty";
-      box.innerHTML = "<div>📭 صفحة <b>"+n+"</b> مفيهاش كلمات جديدة</div>";
-      var near = nearest(n);
+  function showPage(n){
+    n=parseInt(n,10); if(!n||n<1) return;
+    current=n; store("page", n);
+    $("pnumVal").textContent=n;
+    var u=unitOf(n);
+    $("unitLink").hidden=!u; if(u){ $("unitLink").textContent=u.icon+" "+u.name+" ↩"; $("unitLink").onclick=function(){ showUnit(u.id, n); }; }
+    $("ttl").textContent="صفحة "+n;
+    var body=$("pageBody"); body.innerHTML="";
+    var words=PAGES[n];
+    if(!words||!words.length){
+      var box=document.createElement("div"); box.className="empty";
+      box.innerHTML="<div>📭 صفحة <b>"+n+"</b> مفيهاش كلمات جديدة</div>";
+      var near=nearest(n);
       if(near.length){
         var t=document.createElement("div"); t.textContent="👉 أقرب صفحات فيها كلمات:"; box.appendChild(t);
         var c=document.createElement("div"); c.className="chips";
-        near.forEach(function(x){ c.appendChild(chip(x)); });
+        near.forEach(function(x){ var b=document.createElement("button"); b.className="chip"; b.textContent=x; b.onclick=function(){showPage(x)}; c.appendChild(b); });
         box.appendChild(c);
       }
-      res.appendChild(box); refreshChips(); return;
+      body.appendChild(box); go("page"); return;
     }
     var bar=document.createElement("div"); bar.className="bar";
-    var h=document.createElement("h2"); h.textContent="📄 صفحة "+n+" · "+words.length+" كلمة";
-    var all=document.createElement("button"); all.className="big"; all.textContent="🔊 اقرأ الكل";
-    all.onclick=function(){ readAll(all); };
-    bar.appendChild(h); bar.appendChild(all); res.appendChild(bar);
-    var ol=document.createElement("ol"); ol.className="grid";
-    words.forEach(function(w,i){
-      var li=document.createElement("li"); li.className="w";
-      li.innerHTML='<span class="n">'+(i+1)+'</span><span class="word">'+esc(w.w)+'</span>'+
-        '<button class="spk" aria-label="انطق">🔊</button>'+
-        (w.ar?'<span class="ar">'+esc(w.ar)+'</span>':'')+
-        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'');
-      li.querySelector(".spk").onclick=function(){ stopSpeech(); flash(li); say(w.w); };
-      var b2=li.querySelector(".spk2"); if(b2) b2.onclick=function(){ stopSpeech(); flash(li); say(w.ex); };
-      li._w=w; ol.appendChild(li);
-    });
-    res.appendChild(ol);
-    refreshChips();
-    window.scrollTo(0,0);
+    var h=document.createElement("h2"); h.textContent="📄 "+words.length+" كلمة";
+    var all=document.createElement("button"); all.className="big";
+    bar.appendChild(h); bar.appendChild(all); body.appendChild(bar);
+    body.appendChild(wordList(words));
+    makeReadBtn(all, "🔊 اقرأ الكل", function(){return $("pageBody")});
+    go("page");
   }
-  function flash(li){ document.querySelectorAll(".w.on").forEach(function(x){x.classList.remove("on")}); li.classList.add("on"); setTimeout(function(){li.classList.remove("on")},1600); }
-  async function readAll(btn){
-    if(reading){ stopSpeech(); btn.textContent="🔊 اقرأ الكل"; btn.classList.remove("stop"); return; }
-    reading=true; btn.textContent="⏹️ وقّف"; btn.classList.add("stop");
-    var items=[].slice.call(document.querySelectorAll(".w"));
-    for(var i=0;i<items.length && reading;i++){
-      var li=items[i], w=li._w;
-      li.classList.add("on"); li.scrollIntoView({block:"center",behavior:"smooth"});
-      await say(w.w); await wait(450);
-      if(reading && w.ex){ await say(w.ex); await wait(650); }
-      li.classList.remove("on");
-    }
-    reading=false; btn.textContent="🔊 اقرأ الكل"; btn.classList.remove("stop");
+  $("prev").onclick=function(){ var p=nums.filter(function(x){return x<(current||0)}); if(p.length) showPage(p[p.length-1]); else toast("ده أول صفحة فيها كلمات"); };
+  $("next").onclick=function(){ var p=nums.filter(function(x){return x>(current||0)}); if(p.length) showPage(p[0]); else toast("ده آخر صفحة فيها كلمات"); };
+
+  // ---------- settings view ----------
+  function fillVoices(){
+    var vs=listVoices(), sel=$("voiceSel"); sel.innerHTML="";
+    var cur=pickVoice();
+    var shown=vs.filter(function(v){ return S.gender==="male" ? v.male : !v.male; });
+    if(!shown.length) shown=vs;
+    shown.forEach(function(v){ var o=document.createElement("option"); o.value=v.name; o.textContent=(v.male?"👨 ":"👩 ")+v.label; sel.appendChild(o); });
+    if(!vs.length){ var o=document.createElement("option"); o.textContent="مفيش أصوات English (US) على الجهاز"; sel.appendChild(o); }
+    sel.value=cur;
+    var anyMale=vs.some(function(v){return v.male});
+    $("voiceNote").textContent = (S.gender==="male" && !anyMale)
+      ? "ℹ️ مفيش صوت رجالي متثبّت، فبنخفّض طبقة الصوت. لصوت رجالي حقيقي: إعدادات الجهاز ← تحويل النص إلى كلام ← Google ← English (United States) ← اختار صوت رجالي ونزّله."
+      : (has("voices") ? "" : (native ? "ℹ️ اختيار الصوت هيشتغل بعد تحديث التطبيق." : ""));
   }
-  function chip(n){ var b=document.createElement("button"); b.className="chip"+(n===current?" on":""); b.textContent=n; b.onclick=function(){ $("units").open=false; show(n); }; return b; }
-  function refreshChips(){
-    var list=$("unitList"); list.innerHTML="";
-    var groups=(BOOK.units||[]).map(function(u){return {u:u,ps:nums.filter(function(n){return n>=u.from&&n<=u.to})}});
-    var used={}; groups.forEach(function(g){g.ps.forEach(function(p){used[p]=1})});
-    var rest=nums.filter(function(n){return !used[n]}); if(rest.length) groups.unshift({u:{name:"Starter"},ps:rest});
-    groups.forEach(function(g){
-      if(!g.ps.length) return;
-      var d=document.createElement("div"); d.className="ublock";
-      var h=document.createElement("h3"); h.textContent=g.u.name; d.appendChild(h);
-      var c=document.createElement("div"); c.className="chips"; g.ps.forEach(function(p){c.appendChild(chip(p))}); d.appendChild(c);
-      list.appendChild(d);
-    });
+  function renderSettings(){
+    $("rate").value=S.rate; $("rateVal").textContent=S.rate.toFixed(2)+"×";
+    $("pitch").value=S.pitch; $("pitchVal").textContent=S.pitch.toFixed(2);
+    [].forEach.call($("gender").children,function(b){ b.classList.toggle("on", b.dataset.g===S.gender); });
+    $("optImg").checked=S.img; $("optAr").checked=S.ar; $("optEx").checked=S.ex;
+    fillVoices();
+    var ver = has("version") ? native.version() : (native ? "1.1" : "متصفح");
+    $("verInfo").textContent="📱 نسخة التطبيق: "+ver+" · 📚 "+nums.length+" صفحة · "+nums.reduce(function(s,p){return s+PAGES[p].length},0)+" كلمة";
+    $("ttl").textContent="الإعدادات";
+    go("set");
   }
+  $("rate").oninput=function(){ S.rate=parseFloat(this.value); $("rateVal").textContent=S.rate.toFixed(2)+"×"; saveS(); };
+  $("pitch").oninput=function(){ S.pitch=parseFloat(this.value); $("pitchVal").textContent=S.pitch.toFixed(2); saveS(); };
+  $("rate").onchange=$("pitch").onchange=function(){ stopSpeech(); say("Hello!"); };
+  [].forEach.call($("gender").children,function(b){ b.onclick=function(){ S.gender=b.dataset.g; S.voice=""; saveS(); applyNativeVoice(); refreshBrowserVoice(); renderSettingsSoft(); stopSpeech(); say("Hello, how are you?"); }; });
+  function renderSettingsSoft(){ [].forEach.call($("gender").children,function(b){ b.classList.toggle("on", b.dataset.g===S.gender); }); fillVoices(); }
+  $("voiceSel").onchange=function(){ S.voice=this.value; saveS(); applyNativeVoice(); refreshBrowserVoice(); stopSpeech(); say("Hello, how are you?"); };
+  $("testVoice").onclick=function(){ stopSpeech(); say("Hello, how are you?"); };
+  $("resetVoice").onclick=function(){ S.rate=DEF.rate; S.pitch=DEF.pitch; S.gender=DEF.gender; S.voice=""; saveS(); applyNativeVoice(); refreshBrowserVoice(); renderSettings(); };
+  $("optImg").onchange=function(){ S.img=this.checked; saveS(); };
+  $("optAr").onchange=function(){ S.ar=this.checked; saveS(); };
+  $("optEx").onchange=function(){ S.ex=this.checked; saveS(); };
+
+  // ---------- updates (Android app) ----------
+  var apkUrl=null;
+  function setStatus(t){ $("updStatus").textContent=t; }
+  window.onUpdateInfo=function(info){
+    if(typeof info==="string"){ try{info=JSON.parse(info)}catch(e){info={}} }
+    $("checkUpd").disabled=false;
+    var parts=[];
+    if(info.error) parts.push("❌ "+info.error);
+    if(info.content==="updated") parts.push("✅ الكلمات اتحدّثت");
+    else if(info.content==="same") parts.push("✅ الكلمات أحدث نسخة");
+    if(info.apk && info.apk.newer){ apkUrl=info.apk.url; parts.push("🆕 في نسخة جديدة من التطبيق: "+info.apk.version); $("installUpd").hidden=false; $("apkBanner").hidden=false; }
+    else if(info.apk){ parts.push("✅ التطبيق أحدث نسخة"); }
+    setStatus(parts.join(" · ") || "✅ كل حاجة محدّثة");
+  };
+  window.onUpdateProgress=function(p){
+    if(typeof p==="string"){ try{p=JSON.parse(p)}catch(e){p={}} }
+    $("updBar").hidden=false; $("updBar").firstElementChild.style.width=Math.round((p.percent||0))+"%";
+    if(p.message) setStatus(p.message);
+    if(p.done||p.error){ $("installUpd").disabled=false; }
+  };
+  window.showApkUpdate=function(url){ apkUrl=url; $("apkBanner").hidden=false; $("installUpd").hidden=false; };
+  $("checkUpd").onclick=function(){
+    if(has("checkUpdates")){ this.disabled=true; setStatus("⏳ بدوّر…"); native.checkUpdates(); return; }
+    setStatus("ℹ️ النسخة دي من التطبيق قديمة. نزّل الجديدة من اللينك ده مرة واحدة، وبعدها التحديث هيبقى من جوه التطبيق.");
+    showLink();
+  };
+  function showLink(){
+    if($("apkLink")) return;
+    var a=document.createElement("a"); a.id="apkLink"; a.className="lnk"; a.href=RELEASES; a.textContent="⬇️ kalimat.apk";
+    $("updStatus").after(a);
+  }
+  function startInstall(){
+    if(has("installApk") && apkUrl){ $("installUpd").disabled=true; setStatus("⏳ بنزّل…"); native.installApk(apkUrl); return; }
+    if(apkUrl){ location.href=apkUrl; return; }
+    showLink();
+  }
+  $("installUpd").onclick=startInstall;
+  $("apkBannerBtn").onclick=function(){ renderSettings(); startInstall(); };
 
   // ---------- keypad ----------
   var typed="";
-  var keys=["1","2","3","4","5","6","7","8","9","⌫","0","✔"];
-  keys.forEach(function(k){
+  ["1","2","3","4","5","6","7","8","9","⌫","0","✔"].forEach(function(k){
     var b=document.createElement("button"); b.textContent=k;
     if(k==="✔") b.className="ok"; if(k==="⌫") b.className="del";
     b.onclick=function(){
       if(k==="⌫") typed=typed.slice(0,-1);
-      else if(k==="✔"){ $("pad").hidden=true; if(typed) show(typed); return; }
+      else if(k==="✔"){ $("pad").hidden=true; if(typed) showPage(typed); return; }
       else if(typed.length<3) typed+=k;
       $("padShow").textContent=typed||"؟";
     };
     $("keys").appendChild(b);
   });
-  $("pnum").onclick=function(){ typed=""; $("padShow").textContent="؟"; $("pad").hidden=false; };
+  function openPad(){ typed=""; $("padShow").textContent="؟"; $("pad").hidden=false; }
+  $("pnum").onclick=openPad; $("padBtn").onclick=openPad; $("findBig").onclick=openPad;
   $("pad").onclick=function(e){ if(e.target===$("pad")) $("pad").hidden=true; };
-  // arrows jump between vocabulary pages only
-  $("prev").onclick=function(){ var p=nums.filter(function(x){return x<(current||0)}); if(p.length) show(p[p.length-1]); else toast("ده أول صفحة فيها كلمات"); };
-  $("next").onclick=function(){ var p=nums.filter(function(x){return x>(current||0)}); if(p.length) show(p[0]); else toast("ده آخر صفحة فيها كلمات"); };
+  $("homeBtn").onclick=renderHome;
+  $("setBtn").onclick=function(){ if(view==="set") renderHome(); else renderSettings(); };
 
-  // called by the Android app when a newer APK exists
-  window.showApkUpdate=function(url){ $("apkLink").href=url; $("apkUpdate").hidden=false; };
+  // Android back button
+  window.onAndroidBack=function(){
+    if(!$("pad").hidden){ $("pad").hidden=true; return true; }
+    if(view==="page"){ var u=unitOf(current); if(u){ showUnit(u.id,current); return true; } }
+    if(view!=="home"){ renderHome(); return true; }
+    return false;
+  };
 
-  var start=null; try{start=parseInt(localStorage.getItem("page"),10)}catch(e){}
-  show(start || nums[0] || 1);
+  renderHome();
 })();
 </script>
 </body>
