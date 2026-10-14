@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Boudy-En1</title>
+<title>English for Boudy &amp; Anoos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Fredoka:wght@500;600&display=swap">
 <style>
@@ -53,6 +53,22 @@ h2{margin:0;font-size:1.4rem;line-height:1.3;text-wrap:balance}
 .ucard .uar{color:var(--muted)}
 .ucard .cnt{font-size:.95rem;color:var(--blue);font-weight:700}
 .ucard.last{border-color:var(--sun);box-shadow:0 0 0 3px var(--sun)}
+
+/* grade picker */
+.hello{text-align:center;display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.hello .hi{font:600 2.4rem var(--en);color:var(--blue);direction:ltr}
+.grades{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:18px}
+.gcard{background:var(--card);border:4px solid var(--line);border-radius:30px;padding:26px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.gcard .gic{font-size:4rem;line-height:1}
+.gcard .gnum{font:600 4.2rem var(--en);line-height:1;color:var(--ink)}
+.gcard .gen{font:600 1.5rem var(--en);direction:ltr}
+.gcard .gar{font-weight:800;font-size:1.25rem;color:var(--muted)}
+.gcard .cnt{font-size:1rem;color:var(--blue);font-weight:700}
+.gcard.g3{border-color:var(--green)}.gcard.g3 .gnum{color:var(--green)}
+.gcard.g4{border-color:var(--blue)}.gcard.g4 .gnum{color:var(--blue)}
+.gcard.last{box-shadow:0 0 0 5px var(--sun)}
+.gradebar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.gname{font-weight:800;font-size:1.15rem;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:4px 16px}
 
 /* pager */
 .pager{display:flex;align-items:center;justify-content:center;gap:14px}
@@ -171,7 +187,7 @@ a.lnk{color:var(--blue);font-weight:800}
   <div class="topin">
     <button class="tbtn" id="homeBtn" aria-label="الرئيسية">🏠</button>
     <button class="tbtn" id="padBtn" aria-label="ابحث برقم الصفحة">🔢</button>
-    <div class="ttl" id="ttl">📖 Boudy-En1</div>
+    <div class="ttl" id="ttl">📖 English for Boudy &amp; Anoos</div>
     <button class="tbtn" id="setBtn" aria-label="الإعدادات">⚙️</button>
   </div>
 </header>
@@ -179,8 +195,18 @@ a.lnk{color:var(--blue);font-weight:800}
 <main class="wrap">
   <div class="banner" id="apkBanner" hidden><span>🆕 في نسخة جديدة من التطبيق</span><button id="apkBannerBtn">⬇️ حدّث</button></div>
 
+  <!-- GRADE PICKER (first screen) -->
+  <section id="vGrade" class="stack" hidden>
+    <div class="hello">
+      <div class="hi">👋 Hello!</div>
+      <h2>📚 اختار الصف</h2>
+    </div>
+    <div class="grades" id="grades"></div>
+  </section>
+
   <!-- HOME -->
   <section id="vHome" class="stack">
+    <div class="gradebar"><span class="gname" id="gName"></span><button class="chip" id="switchGrade">🔁 غيّر الصف</button></div>
     <button class="findbig" id="findBig">🔢 اكتب رقم الصفحة <span class="n">#</span></button>
     <h2>📚 اختار الوحدة</h2>
     <div class="units" id="units"></div>
@@ -224,11 +250,9 @@ a.lnk{color:var(--blue);font-weight:800}
 
       <div class="panel">
         <h3>🗣️ الصوت</h3>
-        <div class="row"><label for="rate">⚡ السرعة</label><span class="rg"><span aria-hidden="true">🐢</span><input type="range" id="rate" min="0.4" max="1.3" step="0.05"><span aria-hidden="true">🐇</span></span><span class="val" id="rateVal"></span></div>
-        <div class="row"><label for="pitch">🎵 طبقة الصوت</label><span class="rg"><span aria-hidden="true">🔉</span><input type="range" id="pitch" min="0.6" max="1.4" step="0.05"><span aria-hidden="true">🔊</span></span><span class="val" id="pitchVal"></span></div>
-        <div class="row"><label>👤 نوع الصوت</label>
-          <div class="seg" id="gender"><button data-g="male">👨 رجالي</button><button data-g="female">👩 حريمي</button></div>
-        </div>
+        <div class="row"><label for="rate">⚡ السرعة</label><span class="rg"><span aria-hidden="true">🐢</span><input type="range" id="rate" min="0.4" max="1.1" step="0.05"><span aria-hidden="true">🐇</span></span><span class="val" id="rateVal"></span></div>
+        <div class="row"><label for="pitch">🎵 طبقة الصوت</label><span class="rg"><span aria-hidden="true">🔉</span><input type="range" id="pitch" min="0.6" max="1.1" step="0.05"><span aria-hidden="true">🔊</span></span><span class="val" id="pitchVal"></span></div>
+        <p class="note">👨 صوت راجل أمريكاني، هادي وبطيء</p>
         <div class="row"><label for="voiceSel">🎙️ الصوت</label><select id="voiceSel"></select></div>
         <p class="note" id="voiceNote"></p>
         <div class="row"><button class="btn" id="testVoice">▶️ جرّب: Hello, how are you?</button><button class="btn ghost" id="resetVoice">↩️ الافتراضي</button></div>
@@ -263,20 +287,38 @@ a.lnk{color:var(--blue);font-weight:800}
 </div>
 
 <script src="data/pages.js"></script>
+<script src="data/pages3.js"></script>
 <script>
 (function(){
   var $ = function(id){return document.getElementById(id)};
-  var BOOK = window.BOOK || {pages:{},units:[]};
-  var PAGES = BOOK.pages || {}, UNITS = BOOK.units || [];
-  var nums = Object.keys(PAGES).map(Number).filter(function(n){return PAGES[n] && PAGES[n].length}).sort(function(a,b){return a-b});
+  var APP = "English for Boudy & Anoos";
+  // one book per grade; Primary 4 keeps its old ids/keys so saved scores stay
+  var GRADES = [
+    {id:"p3", n:"3", en:"Primary 3", ar:"تالتة ابتدائي", icon:"🌱", book:window.BOOK3},
+    {id:"p4", n:"4", en:"Primary 4", ar:"رابعة ابتدائي", icon:"🚀", book:window.BOOK}
+  ].filter(function(g){ return g.book && g.book.pages; });
+  var G=null, BOOK={pages:{},units:[]}, PAGES={}, UNITS=[], nums=[];
+  function numsOf(P){ return Object.keys(P).map(Number).filter(function(n){return P[n] && P[n].length}).sort(function(a,b){return a-b}); }
+  function setGrade(id){
+    G = GRADES.filter(function(g){return g.id===id})[0] || GRADES[GRADES.length-1];
+    BOOK=G.book; PAGES=BOOK.pages||{}; UNITS=BOOK.units||[]; nums=numsOf(PAGES);
+    store("grade", G.id);
+  }
+  function gk(k){ return G && G.id!=="p4" ? G.id+":"+k : k; }
   var RELEASES = "https://github.com/MuhammadToffaha/English-app/releases/latest/download/kalimat.apk";
   var native = window.AndroidTTS || null;
   function has(fn){ return !!(native && typeof native[fn] === "function"); }
 
   // ---------- settings ----------
-  var DEF = {rate:0.8, pitch:1, gender:"male", voice:"", img:true, ar:true, ex:true, exAr:true};
+  // voice: American man, calm and slow
+  var DEF = {rate:0.7, pitch:0.9, gender:"male", voice:"", img:true, ar:true, ex:true, exAr:true, v:2};
   var S = Object.assign({}, DEF);
-  try{ Object.assign(S, JSON.parse(localStorage.getItem("settings")||"{}")); }catch(e){}
+  var saved={};
+  try{ saved=JSON.parse(localStorage.getItem("settings")||"{}")||{}; }catch(e){}
+  Object.assign(S, saved); S.gender="male";
+  // older versions saved a faster voice: start everyone on the calm, slow man's voice once
+  if(saved.v!==2){ S.rate=DEF.rate; S.pitch=DEF.pitch; S.voice=""; S.v=2; try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} }
+  S.gender="male";
   function saveS(){ try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} applyView(); }
   function applyView(){
     document.body.classList.toggle("hideImg", !S.img);
@@ -300,11 +342,15 @@ a.lnk{color:var(--blue);font-weight:800}
     }
     return out;
   }
+  // calmest male voices first (Google: iom, iol, tpd), offline before online
+  var PREF = [/iom/i,/iol/i,/tpd/i,/guy|davis|brian|eric|christopher|tony|jason/i,/david|mark|alex|aaron|fred|tom/i];
+  function rank(v){ var r=PREF.length; for(var i=0;i<PREF.length;i++){ if(PREF[i].test(v.name)){ r=i; break; } } return r*2 + (/network|online/i.test(v.name+" "+v.label)?1:0); }
+  function maleVoices(){ return listVoices().filter(function(v){return v.male}).sort(function(a,b){return rank(a)-rank(b)}); }
   function pickVoice(){
-    var vs = listVoices();
-    if(S.voice && vs.some(function(v){return v.name===S.voice})) return S.voice;
-    var want = vs.filter(function(v){ return S.gender==="male" ? v.male : !v.male; });
-    return (want[0] || vs[0] || {}).name || "";
+    var ms = maleVoices();
+    if(S.voice && ms.some(function(v){return v.name===S.voice})) return S.voice;
+    if(ms.length) return ms[0].name;
+    var vs = listVoices(); return (vs[0] || {}).name || "";
   }
   var browserVoice = null;
   function refreshBrowserVoice(){
@@ -319,7 +365,7 @@ a.lnk{color:var(--blue);font-weight:800}
   function effPitch(){
     var vs=listVoices(), cur=pickVoice(), v=vs.filter(function(x){return x.name===cur})[0];
     var p = S.pitch;
-    if(S.gender==="male" && (!v || !v.male) && p >= 1) p = 0.8;
+    if((!v || !v.male) && p > 0.75) p = 0.72;
     return p;
   }
 
@@ -411,7 +457,7 @@ a.lnk{color:var(--blue);font-weight:800}
   var view="home";
   function go(v){
     stopSpeech(); view=v;
-    ["Home","Unit","Page","Set","Quiz"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
+    ["Grade","Home","Unit","Page","Set","Quiz"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
     $("homeBtn").classList.toggle("on", v==="home");
     $("setBtn").classList.toggle("on", v==="set");
     window.scrollTo(0,0);
@@ -419,7 +465,7 @@ a.lnk{color:var(--blue);font-weight:800}
 
   function renderHome(){
     var box=$("units"); box.innerHTML="";
-    var last=load("unit");
+    var last=load(gk("unit"));
     UNITS.forEach(function(u){
       var ps=pagesOf(u); if(!ps.length) return;
       var count=ps.reduce(function(s,p){return s+PAGES[p].length},0);
@@ -428,13 +474,14 @@ a.lnk{color:var(--blue);font-weight:800}
       b.onclick=function(){ showUnit(u.id); };
       box.appendChild(b);
     });
-    $("ttl").textContent="📖 Boudy-En1";
+    $("ttl").textContent="📖 "+APP;
+    $("gName").textContent=G.icon+" "+G.en+" · "+G.ar;
     go("home");
   }
 
   function showUnit(id, focusPage){
     var u=UNITS.filter(function(x){return x.id===id})[0]; if(!u) return renderHome();
-    store("unit", id);
+    store(gk("unit"), id);
     $("unitTitle").textContent=u.icon+" "+u.name;
     $("ttl").textContent=u.ar;
     var chips=$("unitChips"); chips.innerHTML="";
@@ -474,7 +521,7 @@ a.lnk{color:var(--blue);font-weight:800}
   }
   function showPage(n){
     n=parseInt(n,10); if(!n||n<1) return;
-    current=n; store("page", n);
+    current=n; store(gk("page"), n);
     $("pnumVal").textContent=n;
     var u=unitOf(n);
     $("unitLink").hidden=!u; if(u){ $("unitLink").textContent=u.icon+" "+u.name+" ↩"; $("unitLink").onclick=function(){ showUnit(u.id, n); }; }
@@ -652,35 +699,32 @@ a.lnk{color:var(--blue);font-weight:800}
   function fillVoices(){
     var vs=listVoices(), sel=$("voiceSel"); sel.innerHTML="";
     var cur=pickVoice();
-    var shown=vs.filter(function(v){ return S.gender==="male" ? v.male : !v.male; });
-    if(!shown.length) shown=vs;
-    shown.forEach(function(v){ var o=document.createElement("option"); o.value=v.name; o.textContent=(v.male?"👨 ":"👩 ")+v.label; sel.appendChild(o); });
+    var shown=maleVoices();
+    if(!shown.length) shown=vs.slice(0,1);
+    shown.forEach(function(v){ var o=document.createElement("option"); o.value=v.name; o.textContent="👨 "+v.label; sel.appendChild(o); });
     if(!vs.length){ var o=document.createElement("option"); o.textContent="مفيش أصوات English (US) على الجهاز"; sel.appendChild(o); }
     sel.value=cur;
     var anyMale=vs.some(function(v){return v.male});
-    $("voiceNote").textContent = (S.gender==="male" && !anyMale)
+    $("voiceNote").textContent = (!anyMale)
       ? "ℹ️ مفيش صوت رجالي متثبّت، فبنخفّض طبقة الصوت. لصوت رجالي حقيقي: إعدادات الجهاز ← تحويل النص إلى كلام ← Google ← English (United States) ← اختار صوت رجالي ونزّله."
       : (has("voices") ? "" : (native ? "ℹ️ اختيار الصوت هيشتغل بعد تحديث التطبيق." : ""));
   }
   function renderSettings(){
     $("rate").value=S.rate; $("rateVal").textContent=S.rate.toFixed(2)+"×";
     $("pitch").value=S.pitch; $("pitchVal").textContent=S.pitch.toFixed(2);
-    [].forEach.call($("gender").children,function(b){ b.classList.toggle("on", b.dataset.g===S.gender); });
     $("optImg").checked=S.img; $("optAr").checked=S.ar; $("optEx").checked=S.ex; $("optExAr").checked=S.exAr!==false;
     fillVoices();
     var ver = has("version") ? native.version() : (native ? "1.1" : "متصفح");
-    $("verInfo").textContent="📱 نسخة التطبيق: "+ver+" · 📚 "+nums.length+" صفحة · "+nums.reduce(function(s,p){return s+PAGES[p].length},0)+" كلمة";
+    $("verInfo").textContent="📱 نسخة التطبيق: "+ver+" · "+GRADES.map(function(g){ var ns=numsOf(g.book.pages); return "📚 "+g.en+": "+ns.length+" صفحة · "+ns.reduce(function(s,p){return s+g.book.pages[p].length},0)+" كلمة"; }).join(" · ");
     $("ttl").textContent="الإعدادات";
     go("set");
   }
   $("rate").oninput=function(){ S.rate=parseFloat(this.value); $("rateVal").textContent=S.rate.toFixed(2)+"×"; saveS(); };
   $("pitch").oninput=function(){ S.pitch=parseFloat(this.value); $("pitchVal").textContent=S.pitch.toFixed(2); saveS(); };
   $("rate").onchange=$("pitch").onchange=function(){ stopSpeech(); say("Hello!"); };
-  [].forEach.call($("gender").children,function(b){ b.onclick=function(){ S.gender=b.dataset.g; S.voice=""; saveS(); applyNativeVoice(); refreshBrowserVoice(); renderSettingsSoft(); stopSpeech(); say("Hello, how are you?"); }; });
-  function renderSettingsSoft(){ [].forEach.call($("gender").children,function(b){ b.classList.toggle("on", b.dataset.g===S.gender); }); fillVoices(); }
   $("voiceSel").onchange=function(){ S.voice=this.value; saveS(); applyNativeVoice(); refreshBrowserVoice(); stopSpeech(); say("Hello, how are you?"); };
   $("testVoice").onclick=function(){ stopSpeech(); say("Hello, how are you?"); };
-  $("resetVoice").onclick=function(){ S.rate=DEF.rate; S.pitch=DEF.pitch; S.gender=DEF.gender; S.voice=""; saveS(); applyNativeVoice(); refreshBrowserVoice(); renderSettings(); };
+  $("resetVoice").onclick=function(){ S.rate=DEF.rate; S.pitch=DEF.pitch; S.voice=""; saveS(); applyNativeVoice(); refreshBrowserVoice(); renderSettings(); };
   $("optImg").onchange=function(){ S.img=this.checked; saveS(); };
   $("optAr").onchange=function(){ S.ar=this.checked; saveS(); };
   $("optEx").onchange=function(){ S.ex=this.checked; saveS(); };
@@ -741,19 +785,36 @@ a.lnk{color:var(--blue);font-weight:800}
   function openPad(){ typed=""; $("padShow").textContent="؟"; $("pad").hidden=false; }
   $("pnum").onclick=openPad; $("padBtn").onclick=openPad; $("findBig").onclick=openPad;
   $("pad").onclick=function(e){ if(e.target===$("pad")) $("pad").hidden=true; };
-  $("homeBtn").onclick=renderHome;
-  $("setBtn").onclick=function(){ if(view==="set") renderHome(); else renderSettings(); };
+  $("homeBtn").onclick=function(){ if(G) renderHome(); else renderGrades(); };
+  $("setBtn").onclick=function(){ if(view==="set"){ if(G) renderHome(); else renderGrades(); } else renderSettings(); };
+  $("switchGrade").onclick=renderGrades;
+
+  // ---------- grade picker ----------
+  function renderGrades(){
+    var box=$("grades"); box.innerHTML="";
+    var last=load("grade");
+    GRADES.forEach(function(g){
+      var ns=numsOf(g.book.pages), cnt=ns.reduce(function(s,p){return s+g.book.pages[p].length},0);
+      var b=document.createElement("button"); b.className="gcard g"+g.n+(g.id===last?" last":"");
+      b.innerHTML='<span class="gic">'+g.icon+'</span><span class="gnum">'+g.n+'</span><span class="gen">'+esc(g.en)+'</span><span class="gar">'+esc(g.ar)+'</span><span class="cnt">'+cnt+' كلمة · '+(g.book.units||[]).length+' وحدة</span>';
+      b.onclick=function(){ stopSpeech(); setGrade(g.id); renderHome(); };
+      box.appendChild(b);
+    });
+    $("ttl").textContent="📖 "+APP;
+    go("grade");
+  }
 
   // Android back button
   window.onAndroidBack=function(){
     if(!$("pad").hidden){ $("pad").hidden=true; return true; }
     if(view==="page"){ var u=unitOf(current); if(u){ showUnit(u.id,current); return true; } }
     if(view==="quiz"){ $("quizExit").click(); return true; }
-    if(view!=="home"){ renderHome(); return true; }
+    if(view==="home"){ renderGrades(); return true; }
+    if(view!=="grade"){ if(G) renderHome(); else renderGrades(); return true; }
     return false;
   };
 
-  renderHome();
+  renderGrades();
 })();
 </script>
 </body>

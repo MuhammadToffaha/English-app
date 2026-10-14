@@ -152,6 +152,7 @@ public class MainActivity extends Activity {
         String n = name.toLowerCase(Locale.ROOT);
         if (n.contains("female")) return false;
         return n.contains("male") || n.contains("-iol") || n.contains("-iom") || n.contains("-tpd")
+                || n.contains("iol-") || n.contains("iom-") || n.contains("tpd-")
                 || n.contains("smtm") || n.contains("#m");
     }
 
@@ -163,16 +164,36 @@ public class MainActivity extends Activity {
         return (isMale(n) ? "Male " : "") + code + (v.isNetworkConnectionRequired() ? " · online" : " · offline");
     }
 
+    /** Lower is calmer: Google's iom / iol / tpd are the American male voices. Offline first. */
+    static int maleRank(Voice v) {
+        String n = v.getName().toLowerCase(Locale.ROOT);
+        int r = n.contains("iom") ? 0 : n.contains("iol") ? 1 : n.contains("tpd") ? 2 : 3;
+        return r * 2 + (v.isNetworkConnectionRequired() ? 1 : 0);
+    }
+
+    private Voice bestMale() {
+        Voice best = null;
+        for (Voice v : usVoices()) {
+            if (!isMale(v.getName())) continue;
+            if (best == null || maleRank(v) < maleRank(best)) best = v;
+        }
+        return best;
+    }
+
+    /** Always a man's voice: the chosen one if it is male, otherwise the calmest male voice installed. */
     private void applyVoice() {
         if (tts == null || !ttsReady) return;
         String want = chosenVoice;
-        if (want == null || want.isEmpty()) return;
-        for (Voice v : usVoices()) {
-            if (v.getName().equals(want)) {
-                try { tts.setVoice(v); } catch (Exception ignored) { }
-                return;
+        if (want != null && !want.isEmpty() && isMale(want)) {
+            for (Voice v : usVoices()) {
+                if (v.getName().equals(want)) {
+                    try { tts.setVoice(v); } catch (Exception ignored) { }
+                    return;
+                }
             }
         }
+        Voice m = bestMale();
+        if (m != null) { try { tts.setVoice(m); } catch (Exception ignored) { } }
     }
 
     // ---------- bundled content ----------
@@ -323,7 +344,7 @@ public class MainActivity extends Activity {
     // ---------- in-app APK install ----------
     private void installApk(String url) {
         if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
-            progress(0, "🔓 اسمح لـ «Boudy-En1» بتثبيت التطبيقات، ارجع، ودوس «نزّل وثبّت» تاني.", false, true);
+            progress(0, "🔓 اسمح لـ «English for Boudy & Anoos» بتثبيت التطبيقات، ارجع، ودوس «نزّل وثبّت» تاني.", false, true);
             ui.post(() -> {
                 try {
                     startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
@@ -460,8 +481,8 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void speak(String text, float rate, float pitch) {
             if (tts == null || !ttsReady) { notifyDone(); return; }
-            tts.setSpeechRate(rate <= 0 ? 0.85f : rate);
-            tts.setPitch(pitch <= 0 ? 1f : pitch);
+            tts.setSpeechRate(rate <= 0 ? 0.7f : rate);
+            tts.setPitch(pitch <= 0 ? 0.9f : pitch);
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, new Bundle(), "k" + System.nanoTime());
         }
 
