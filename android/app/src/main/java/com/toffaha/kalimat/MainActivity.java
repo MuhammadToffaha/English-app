@@ -323,7 +323,7 @@ public class MainActivity extends Activity {
     // ---------- in-app APK install ----------
     private void installApk(String url) {
         if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
-            progress(0, "🔓 اسمح لـ «كلمات كتابي» بتثبيت التطبيقات، ارجع، ودوس «نزّل وثبّت» تاني.", false, true);
+            progress(0, "🔓 اسمح لـ «Boudy-En1» بتثبيت التطبيقات، ارجع، ودوس «نزّل وثبّت» تاني.", false, true);
             ui.post(() -> {
                 try {
                     startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,

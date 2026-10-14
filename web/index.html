@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>كلمات كتابي</title>
+<title>Boudy-En1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Fredoka:wght@500;600&display=swap">
 <style>
@@ -84,6 +84,8 @@ h2{margin:0;font-size:1.4rem;line-height:1.3;text-wrap:balance}
 .spk{width:62px;height:62px;border-radius:50%;border:none;background:var(--sun);font-size:1.8rem;grid-row:1/3;grid-column:4}
 .ex{grid-column:1/-1;display:flex;gap:10px;align-items:center;border-top:2px dashed var(--line);margin-top:8px;padding-top:8px}
 .ex p{margin:0;flex:1;min-width:0;text-align:left;font:500 1.22rem var(--en)}
+.exar{display:block;direction:rtl;text-align:right;font:500 1.05rem var(--ar);color:var(--muted);margin-top:4px}
+.hideExAr .exar{display:none}
 .ex mark{background:var(--sun);color:var(--ink);border-radius:5px;padding:0 4px}
 .spk2{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:1.4rem;flex:none}
 .empty{background:var(--card);border:3px dashed var(--line);border-radius:22px;padding:28px 18px;text-align:center;font-size:1.2rem;display:flex;flex-direction:column;gap:12px;align-items:center}
@@ -169,7 +171,7 @@ a.lnk{color:var(--blue);font-weight:800}
   <div class="topin">
     <button class="tbtn" id="homeBtn" aria-label="الرئيسية">🏠</button>
     <button class="tbtn" id="padBtn" aria-label="ابحث برقم الصفحة">🔢</button>
-    <div class="ttl" id="ttl">📖 كلمات كتابي</div>
+    <div class="ttl" id="ttl">📖 Boudy-En1</div>
     <button class="tbtn" id="setBtn" aria-label="الإعدادات">⚙️</button>
   </div>
 </header>
@@ -237,6 +239,7 @@ a.lnk{color:var(--blue);font-weight:800}
         <label class="tog"><input type="checkbox" id="optImg"> 🖼️ صور الكلمات</label>
         <label class="tog"><input type="checkbox" id="optAr"> 🔤 المعنى بالعربي</label>
         <label class="tog"><input type="checkbox" id="optEx"> 💬 الأمثلة</label>
+        <label class="tog"><input type="checkbox" id="optExAr"> 🇪🇬 ترجمة الأمثلة بالعربي</label>
       </div>
 
       <div class="panel">
@@ -271,7 +274,7 @@ a.lnk{color:var(--blue);font-weight:800}
   function has(fn){ return !!(native && typeof native[fn] === "function"); }
 
   // ---------- settings ----------
-  var DEF = {rate:0.8, pitch:1, gender:"male", voice:"", img:true, ar:true, ex:true};
+  var DEF = {rate:0.8, pitch:1, gender:"male", voice:"", img:true, ar:true, ex:true, exAr:true};
   var S = Object.assign({}, DEF);
   try{ Object.assign(S, JSON.parse(localStorage.getItem("settings")||"{}")); }catch(e){}
   function saveS(){ try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} applyView(); }
@@ -279,6 +282,7 @@ a.lnk{color:var(--blue);font-weight:800}
     document.body.classList.toggle("hideImg", !S.img);
     document.body.classList.toggle("hideAr", !S.ar);
     document.body.classList.toggle("hideEx", !S.ex);
+    document.body.classList.toggle("hideExAr", S.exAr===false);
   }
   applyView();
 
@@ -375,7 +379,7 @@ a.lnk{color:var(--blue);font-weight:800}
         '<span class="word">'+esc(w.w)+'</span>'+
         '<button class="spk" aria-label="انطق">🔊</button>'+
         (w.ar?'<span class="ar">'+esc(w.ar)+'</span>':'')+
-        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'');
+        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+(w.exAr?'<span class="exar">'+esc(w.exAr)+'</span>':'')+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'');
       li.querySelector(".spk").onclick=function(){ stopSpeech(); flash(li); say(w.w); };
       var pic=li.querySelector(".pic"); if(pic){ pic.onclick=function(){ stopSpeech(); flash(li); say(w.w); }; pic.onerror=function(){ pic.remove(); }; }
       var b2=li.querySelector(".spk2"); if(b2) b2.onclick=function(){ stopSpeech(); flash(li); say(w.ex); };
@@ -424,7 +428,7 @@ a.lnk{color:var(--blue);font-weight:800}
       b.onclick=function(){ showUnit(u.id); };
       box.appendChild(b);
     });
-    $("ttl").textContent="📖 كلمات كتابي";
+    $("ttl").textContent="📖 Boudy-En1";
     go("home");
   }
 
@@ -609,6 +613,7 @@ a.lnk{color:var(--blue);font-weight:800}
     var fb=$("qfb");
     if(right){ Q.score++; tone(true); fb.className="qfb ok"; fb.textContent=["👏 برافو!","🌟 ممتاز!","✅ صح!","🎉 شاطر!"][Q.score%4]; }
     else { btn.classList.add("bad"); tone(false); Q.wrong.push(q.word); fb.className="qfb bad"; fb.textContent="❌ الإجابة الصح: "+(q.key==="ar"?q.word.ar:q.word.w); }
+    if(q.type==="blank"){ var sEl=document.querySelector(".qsent"); if(sEl){ sEl.innerHTML=mark(q.word.ex,q.word.w)+(q.word.exAr?'<span class="exar" style="text-align:center">'+esc(q.word.exAr)+'</span>':''); } }
     stopSpeech();
     var spoken = q.type==="blank" ? q.word.ex : q.word.w;
     setTimeout(function(){
@@ -661,7 +666,7 @@ a.lnk{color:var(--blue);font-weight:800}
     $("rate").value=S.rate; $("rateVal").textContent=S.rate.toFixed(2)+"×";
     $("pitch").value=S.pitch; $("pitchVal").textContent=S.pitch.toFixed(2);
     [].forEach.call($("gender").children,function(b){ b.classList.toggle("on", b.dataset.g===S.gender); });
-    $("optImg").checked=S.img; $("optAr").checked=S.ar; $("optEx").checked=S.ex;
+    $("optImg").checked=S.img; $("optAr").checked=S.ar; $("optEx").checked=S.ex; $("optExAr").checked=S.exAr!==false;
     fillVoices();
     var ver = has("version") ? native.version() : (native ? "1.1" : "متصفح");
     $("verInfo").textContent="📱 نسخة التطبيق: "+ver+" · 📚 "+nums.length+" صفحة · "+nums.reduce(function(s,p){return s+PAGES[p].length},0)+" كلمة";
@@ -679,6 +684,7 @@ a.lnk{color:var(--blue);font-weight:800}
   $("optImg").onchange=function(){ S.img=this.checked; saveS(); };
   $("optAr").onchange=function(){ S.ar=this.checked; saveS(); };
   $("optEx").onchange=function(){ S.ex=this.checked; saveS(); };
+  $("optExAr").onchange=function(){ S.exAr=this.checked; saveS(); };
 
   // ---------- updates (Android app) ----------
   var apkUrl=null;

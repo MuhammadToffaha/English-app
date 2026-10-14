@@ -1,9 +1,9 @@
-# 📖 كلمات كتابي — Kalimat
+# 📖 Boudy-En1
 
 <img src="icon-512.png" width="96" align="right" alt="">
 
 Vocabulary helper for **El-Moasser English · 4th Primary · First Term 2027**.
-The kid types a page number and sees that page's words in book order, each with an Arabic meaning, one simple example, and a 🔊 button that speaks it in an American accent.
+The kid types a page number and sees that page's words in book order, each with an Arabic meaning, one simple example with its Arabic translation, and a 🔊 button that speaks it in an American accent.
 
 ## 📱 Install on the tablet
 
