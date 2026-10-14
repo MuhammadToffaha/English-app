@@ -77,6 +77,7 @@ h2{margin:0;font-size:1.4rem;line-height:1.3;text-wrap:balance}
 .w.on{border-color:var(--sun);box-shadow:0 0 0 5px var(--sun)}
 .n{font:600 1rem var(--en);color:var(--muted);min-width:1.4em;text-align:center;grid-row:1/3}
 .pic{width:84px;height:68px;border-radius:14px;object-fit:cover;grid-row:1/3;background:var(--line)}
+.emo{display:flex;align-items:center;justify-content:center;font-size:2.6rem;line-height:1;background:#fff6d6;cursor:pointer}
 .nopic{width:0;height:0;grid-row:1/3}
 .word{font:600 1.9rem var(--en);text-align:left;min-width:0;overflow-wrap:anywhere;line-height:1.2}
 .ar{grid-column:3/4;color:var(--muted);font-size:1.05rem;direction:rtl;text-align:left}
@@ -122,7 +123,7 @@ a.lnk{color:var(--blue);font-weight:800}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:14px;z-index:20;max-width:90vw;text-align:center}
 .banner{background:var(--green);color:#fff;border-radius:18px;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-weight:700}
 .banner button{background:var(--sun);color:var(--ink);border:none;border-radius:12px;padding:8px 16px;font-weight:800}
-@media (max-width:560px){.word{font-size:1.5rem}.pic{width:64px;height:54px}.pnum{min-width:120px;font-size:2.2rem}.arrow{width:56px;height:56px}.spk{width:54px;height:54px}}
+@media (max-width:560px){.emo{font-size:2rem}.word{font-size:1.5rem}.pic{width:64px;height:54px}.pnum{min-width:120px;font-size:2.2rem}.arrow{width:56px;height:56px}.spk{width:54px;height:54px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -300,6 +301,11 @@ a.lnk{color:var(--blue);font-weight:800}
   function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
   function mark(ex, w){
     var e = esc(ex);
+    var whole = String(w||"").split("/")[0].replace(/[.…!?+]/g," ").trim();
+    if(whole.indexOf(" ")>0){
+      var rw = new RegExp("\\b("+whole.replace(/[.*+?^${}()|[\]\\]/g,"\\$&").replace(/\s+/g,"\\s+")+"\\w*)","i");
+      if(rw.test(e)) return e.replace(rw,"<mark>$1</mark>");
+    }
     var parts = String(w||"").split("/").map(function(p){return p.replace(/[.…!?+]/g," ").trim().split(/\s+/)[0]}).filter(function(p){return p && p.length>1});
     parts.sort(function(a,b){return b.length-a.length});
     for(var i=0;i<parts.length;i++){
@@ -319,7 +325,7 @@ a.lnk{color:var(--blue);font-weight:800}
     words.forEach(function(w,i){
       var li=document.createElement("li"); li.className="w";
       li.innerHTML='<span class="n">'+(i+1)+'</span>'+
-        (w.img?'<img class="pic" loading="lazy" alt="" src="'+esc(w.img)+'">':'<span class="nopic"></span>')+
+        (w.img?'<img class="pic" loading="lazy" alt="" src="'+esc(w.img)+'">':(w.emo?'<span class="pic emo" aria-hidden="true">'+esc(w.emo)+'</span>':'<span class="nopic"></span>'))+
         '<span class="word">'+esc(w.w)+'</span>'+
         '<button class="spk" aria-label="انطق">🔊</button>'+
         (w.ar?'<span class="ar">'+esc(w.ar)+'</span>':'')+
