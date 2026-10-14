@@ -1,5 +1,6 @@
 // Vocabulary by printed page number. Edit and push to GitHub: the app updates itself.
 // img = picture cropped from the book, emo = emoji picture when the book has none.
+// units[].lessons[] groups pages into the book's lessons (used for lesson tests).
 window.BOOK = {
  "title": "El-Moasser English · 4th Primary · First Term 2027",
  "units": [
@@ -9,7 +10,17 @@ window.BOOK = {
    "ar": "مراجعة البداية",
    "icon": "🎒",
    "from": 1,
-   "to": 21
+   "to": 21,
+   "lessons": [
+    {
+     "id": "starter-l1",
+     "n": 1,
+     "title": "Learn and Return",
+     "pages": [
+      11
+     ]
+    }
+   ]
   },
   {
    "id": "u1",
@@ -17,7 +28,42 @@ window.BOOK = {
    "ar": "الحواس الخمس",
    "icon": "👂",
    "from": 22,
-   "to": 65
+   "to": 65,
+   "lessons": [
+    {
+     "id": "u1-l1",
+     "n": 1,
+     "title": "What are the Five Senses?",
+     "pages": [
+      23
+     ]
+    },
+    {
+     "id": "u1-l2",
+     "n": 2,
+     "title": "Healthy Habits",
+     "pages": [
+      29
+     ]
+    },
+    {
+     "id": "u1-l3",
+     "n": 3,
+     "title": "Story Time: Goha's Great Meal",
+     "pages": [
+      38,
+      42
+     ]
+    },
+    {
+     "id": "u1-l4",
+     "n": 4,
+     "title": "Writing · Think and Create",
+     "pages": [
+      46
+     ]
+    }
+   ]
   },
   {
    "id": "u2",
@@ -25,7 +71,43 @@ window.BOOK = {
    "ar": "مجتمعي",
    "icon": "🏘️",
    "from": 66,
-   "to": 110
+   "to": 110,
+   "lessons": [
+    {
+     "id": "u2-l1",
+     "n": 1,
+     "title": "Helping the Community",
+     "pages": [
+      67
+     ]
+    },
+    {
+     "id": "u2-l2",
+     "n": 2,
+     "title": "Community Problems and Solutions",
+     "pages": [
+      73
+     ]
+    },
+    {
+     "id": "u2-l3",
+     "n": 3,
+     "title": "Egypt: My Culture",
+     "pages": [
+      81,
+      85,
+      86
+     ]
+    },
+    {
+     "id": "u2-l4",
+     "n": 4,
+     "title": "Writing · Think and Create",
+     "pages": [
+      90
+     ]
+    }
+   ]
   },
   {
    "id": "u3",
@@ -33,7 +115,43 @@ window.BOOK = {
    "ar": "الحيوانات",
    "icon": "🦁",
    "from": 111,
-   "to": 153
+   "to": 153,
+   "lessons": [
+    {
+     "id": "u3-l1",
+     "n": 1,
+     "title": "Let's Meet the Animals!",
+     "pages": [
+      112
+     ]
+    },
+    {
+     "id": "u3-l2",
+     "n": 2,
+     "title": "Taking Care of Animals",
+     "pages": [
+      119
+     ]
+    },
+    {
+     "id": "u3-l3",
+     "n": 3,
+     "title": "Story Time: The Old Lion and the Fox",
+     "pages": [
+      127,
+      128,
+      131
+     ]
+    },
+    {
+     "id": "u3-l4",
+     "n": 4,
+     "title": "Writing · Think and Create",
+     "pages": [
+      134
+     ]
+    }
+   ]
   },
   {
    "id": "r1",
@@ -41,7 +159,17 @@ window.BOOK = {
    "ar": "مراجعة",
    "icon": "⭐",
    "from": 154,
-   "to": 155
+   "to": 155,
+   "lessons": [
+    {
+     "id": "r1-l1",
+     "n": 1,
+     "title": "Review on Units 1, 2 & 3",
+     "pages": [
+      154
+     ]
+    }
+   ]
   },
   {
    "id": "u4",
@@ -49,7 +177,43 @@ window.BOOK = {
    "ar": "مصر وطني",
    "icon": "🇪🇬",
    "from": 156,
-   "to": 193
+   "to": 193,
+   "lessons": [
+    {
+     "id": "u4-l1",
+     "n": 1,
+     "title": "Places in Egypt",
+     "pages": [
+      157,
+      158
+     ]
+    },
+    {
+     "id": "u4-l2",
+     "n": 2,
+     "title": "My City",
+     "pages": [
+      162
+     ]
+    },
+    {
+     "id": "u4-l3",
+     "n": 3,
+     "title": "The World of Big Numbers",
+     "pages": [
+      171,
+      173
+     ]
+    },
+    {
+     "id": "u4-l4",
+     "n": 4,
+     "title": "Writing · Think and Create",
+     "pages": [
+      174
+     ]
+    }
+   ]
   },
   {
    "id": "u5",
@@ -57,7 +221,42 @@ window.BOOK = {
    "ar": "يوم في العمل",
    "icon": "👷",
    "from": 194,
-   "to": 234
+   "to": 234,
+   "lessons": [
+    {
+     "id": "u5-l1",
+     "n": 1,
+     "title": "Different Jobs",
+     "pages": [
+      195
+     ]
+    },
+    {
+     "id": "u5-l2",
+     "n": 2,
+     "title": "Jobs I Love!",
+     "pages": [
+      201
+     ]
+    },
+    {
+     "id": "u5-l3",
+     "n": 3,
+     "title": "Story Time: The Last House",
+     "pages": [
+      209,
+      212
+     ]
+    },
+    {
+     "id": "u5-l4",
+     "n": 4,
+     "title": "Writing · Think and Create",
+     "pages": [
+      215
+     ]
+    }
+   ]
   },
   {
    "id": "u6",
@@ -65,7 +264,43 @@ window.BOOK = {
    "ar": "الفساتين المائة",
    "icon": "👗",
    "from": 235,
-   "to": 243
+   "to": 243,
+   "lessons": [
+    {
+     "id": "u6-l1",
+     "n": 1,
+     "title": "Picture Dictionary",
+     "pages": [
+      237
+     ]
+    },
+    {
+     "id": "u6-l2",
+     "n": 2,
+     "title": "The Beginning",
+     "pages": [
+      238,
+      239
+     ]
+    },
+    {
+     "id": "u6-l3",
+     "n": 3,
+     "title": "The Middle",
+     "pages": [
+      240,
+      241
+     ]
+    },
+    {
+     "id": "u6-l4",
+     "n": 4,
+     "title": "The End",
+     "pages": [
+      242
+     ]
+    }
+   ]
   }
  ],
  "pages": {

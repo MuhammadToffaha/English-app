@@ -16,6 +16,7 @@ The kid types a page number and sees that page's words in book order, each with 
 - 🏠 **Home**: pick a unit → all its words, page by page, with pictures from the book where the book has them
 - 🔢 **Page pad**: type the printed page number → that page's words in book order
 - 🔊 tap the speaker or the picture to hear the word; 🗣️ to hear the example
+- 📝 **Tests**: every lesson has a test (12 questions) and every unit has a full test (20 questions): listen, picture, Arabic ↔ English, complete the sentence. Best score is saved with ⭐, and "🎯 retry mistakes" repeats only the wrong words
 - ⚙️ **Settings**: speed, pitch, male/female voice, show/hide pictures · Arabic · examples, and **🔄 check for updates / install the new version**
 
 ## 🔄 How updates work

@@ -112,6 +112,43 @@ select{font:500 1rem var(--en);padding:8px;border-radius:12px;border:2px solid v
 .bar2 i{display:block;height:100%;width:0;background:var(--green);transition:width .2s}
 a.lnk{color:var(--blue);font-weight:800}
 
+/* lessons + tests */
+.lesson{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.lhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.lhead h3{margin:0;font:600 1.2rem var(--en);direction:ltr;text-align:right;flex:1;min-width:0}
+.tbtn2{border:none;border-radius:16px;padding:10px 16px;font:800 1.05rem var(--ar);background:var(--green);color:#fff;display:inline-flex;align-items:center;gap:8px}
+.tbtn2.unit{background:var(--blue)}
+.best{font:600 .95rem var(--en);background:#fff6d6;color:var(--ink);border-radius:999px;padding:2px 10px;direction:ltr}
+.ucard .best{justify-self:start;grid-column:2}
+.testsrow{display:flex;gap:10px;flex-wrap:wrap}
+/* quiz */
+.qtop{display:flex;align-items:center;gap:12px}
+.qbar{flex:1;height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.qbar i{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.qnum{font:600 1.1rem var(--en);direction:ltr}
+.qcard{background:var(--card);border:3px solid var(--line);border-radius:26px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.qask{font-weight:800;font-size:1.25rem}
+.qimg{width:min(260px,70vw);height:auto;max-height:200px;object-fit:contain;border-radius:18px}
+.qemo{font-size:5rem;line-height:1}
+.qen{font:600 2.4rem var(--en);direction:ltr}
+.qar{font-size:2rem;font-weight:800}
+.qsent{font:500 1.5rem var(--en);direction:ltr;line-height:1.5}
+.qsent b{display:inline-block;min-width:4ch;border-bottom:4px solid var(--blue);color:var(--blue)}
+.qplay{width:110px;height:110px;border-radius:50%;border:none;background:var(--sun);font-size:3rem}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;width:100%}
+.opt{min-height:72px;border-radius:20px;border:3px solid var(--line);background:var(--paper);font:600 1.45rem var(--en);padding:10px;direction:ltr}
+.opt.arx{font:800 1.35rem var(--ar);direction:rtl}
+.opt.ok{background:#d9f5e3;border-color:var(--green)}
+.opt.bad{background:#fde2e2;border-color:var(--margin)}
+.opt:disabled{cursor:default}
+.qfb{font-weight:800;font-size:1.3rem;min-height:1.6em}
+.qfb.ok{color:var(--green)}.qfb.bad{color:var(--margin)}
+.result{background:var(--card);border:3px solid var(--sun);border-radius:26px;padding:24px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.stars{font-size:3rem;letter-spacing:6px}
+.score{font:600 2.6rem var(--en);direction:ltr}
+.wrong{width:100%;text-align:left;direction:ltr;display:flex;flex-direction:column;gap:6px}
+.wrong div{background:var(--paper);border-radius:12px;padding:6px 12px;font:500 1.1rem var(--en)}
+.wrong span{color:var(--muted);font-family:var(--ar);direction:rtl;float:right}
 /* keypad */
 .pad{position:fixed;inset:0;background:var(--shade);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}
 .padbox{background:var(--paper);border-radius:28px;padding:18px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px}
@@ -151,8 +188,17 @@ a.lnk{color:var(--blue);font-weight:800}
   <section id="vUnit" hidden>
     <div class="stack">
       <div class="bar"><h2 id="unitTitle"></h2><button class="big" id="unitReadAll">🔊 اقرأ الوحدة</button></div>
+      <div class="testsrow"><button class="tbtn2 unit" id="unitTest">📝 اختبار الوحدة كلها</button><span class="best" id="unitBest" hidden></span></div>
       <div class="chips" id="unitChips"></div>
-      <div id="unitList"></div>
+      <div id="unitList" class="stack"></div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="vQuiz" hidden>
+    <div class="stack">
+      <div class="bar"><h2 id="quizTitle"></h2><button class="chip" id="quizExit">✖ خروج</button></div>
+      <div id="quizBody" class="stack"></div>
     </div>
   </section>
 
@@ -361,7 +407,7 @@ a.lnk{color:var(--blue);font-weight:800}
   var view="home";
   function go(v){
     stopSpeech(); view=v;
-    ["Home","Unit","Page","Set"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
+    ["Home","Unit","Page","Set","Quiz"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
     $("homeBtn").classList.toggle("on", v==="home");
     $("setBtn").classList.toggle("on", v==="set");
     window.scrollTo(0,0);
@@ -374,7 +420,7 @@ a.lnk{color:var(--blue);font-weight:800}
       var ps=pagesOf(u); if(!ps.length) return;
       var count=ps.reduce(function(s,p){return s+PAGES[p].length},0);
       var b=document.createElement("button"); b.className="ucard"+(u.id===last?" last":"");
-      b.innerHTML='<span class="ic">'+u.icon+'</span><b>'+esc(u.name)+'</b><span class="uar">'+esc(u.ar)+'</span><span class="cnt">'+count+' كلمة · '+ps.length+' صفحة</span>';
+      b.innerHTML='<span class="ic">'+u.icon+'</span><b>'+esc(u.name)+'</b><span class="uar">'+esc(u.ar)+'</span><span class="cnt">'+count+' كلمة · '+ps.length+' صفحة</span>'+bestBadge(u.id);
       b.onclick=function(){ showUnit(u.id); };
       box.appendChild(b);
     });
@@ -389,15 +435,28 @@ a.lnk{color:var(--blue);font-weight:800}
     $("ttl").textContent=u.ar;
     var chips=$("unitChips"); chips.innerHTML="";
     var list=$("unitList"); list.innerHTML="";
-    pagesOf(u).forEach(function(p){
-      var c=document.createElement("button"); c.className="chip"; c.textContent="📄 "+p;
-      c.onclick=function(){ showPage(p); }; chips.appendChild(c);
-      var head=document.createElement("div"); head.className="pghead"; head.id="up-"+p;
-      head.innerHTML='<h3>📄 صفحة '+p+'</h3>';
-      var open=document.createElement("button"); open.className="chip"; open.textContent="افتح الصفحة ←";
-      open.onclick=function(){ showPage(p); }; head.appendChild(open);
-      list.appendChild(head); list.appendChild(wordList(PAGES[p]));
+    (u.lessons||[]).forEach(function(L){
+      var ps=L.pages.filter(function(p){return PAGES[p]&&PAGES[p].length});
+      if(!ps.length) return;
+      var box=document.createElement("div"); box.className="lesson"; box.id="ul-"+L.id;
+      var head=document.createElement("div"); head.className="lhead";
+      var t=document.createElement("h3"); t.textContent="Lesson "+L.n+" · "+L.title; head.appendChild(t);
+      var tb=document.createElement("button"); tb.className="tbtn2"; tb.innerHTML="📝 اختبار الدرس "+bestBadge(L.id);
+      tb.onclick=function(){ startQuiz(L.id); }; head.appendChild(tb);
+      box.appendChild(head);
+      var c0=document.createElement("button"); c0.className="chip"; c0.textContent="L"+L.n;
+      c0.onclick=function(){ box.scrollIntoView({behavior:"smooth"}); }; chips.appendChild(c0);
+      ps.forEach(function(p){
+        var ph=document.createElement("div"); ph.className="pghead"; ph.id="up-"+p;
+        ph.innerHTML='<h3>📄 صفحة '+p+'</h3>';
+        var open=document.createElement("button"); open.className="chip"; open.textContent="افتح الصفحة ←";
+        open.onclick=function(){ showPage(p); }; ph.appendChild(open);
+        box.appendChild(ph); box.appendChild(wordList(PAGES[p]));
+      });
+      list.appendChild(box);
     });
+    $("unitTest").onclick=function(){ startQuiz(u.id); };
+    var ub=$("unitBest"), bs=getBest(u.id); ub.hidden=!bs; if(bs) ub.textContent="⭐ أحسن نتيجة "+bs.score+"/"+bs.total;
     makeReadBtn($("unitReadAll"), "🔊 اقرأ الوحدة", function(){return $("unitList")});
     go("unit");
     if(focusPage){ var el=$("up-"+focusPage); if(el) el.scrollIntoView(); }
@@ -440,6 +499,149 @@ a.lnk{color:var(--blue);font-weight:800}
   }
   $("prev").onclick=function(){ var p=nums.filter(function(x){return x<(current||0)}); if(p.length) showPage(p[p.length-1]); else toast("ده أول صفحة فيها كلمات"); };
   $("next").onclick=function(){ var p=nums.filter(function(x){return x>(current||0)}); if(p.length) showPage(p[0]); else toast("ده آخر صفحة فيها كلمات"); };
+
+  // ---------- tests ----------
+  function getBest(id){ try{ return JSON.parse(load("best:"+id)||"null"); }catch(e){ return null; } }
+  function bestBadge(id){ var b=getBest(id); return b ? '<span class="best">⭐ '+b.score+'/'+b.total+'</span>' : ''; }
+  function reEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
+  function findTarget(ex, w){
+    var whole=String(w||"").split("/")[0].replace(/[.…!?+]/g," ").trim();
+    var tries=[];
+    if(whole.indexOf(" ")>0) tries.push(reEsc(whole).replace(/\s+/g,"\\s+"));
+    String(w||"").split("/").map(function(p){return p.replace(/[.…!?+]/g," ").trim().split(/\s+/)[0]}).filter(function(p){return p&&p.length>1})
+      .sort(function(a,b){return b.length-a.length}).forEach(function(p){ tries.push(reEsc(p)); });
+    for(var i=0;i<tries.length;i++){ var m=new RegExp("\\b("+tries[i]+"\\w*)","i").exec(ex); if(m) return m; }
+    return null;
+  }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  function wordsOfPages(ps){
+    var seen={}, out=[];
+    ps.forEach(function(p){ (PAGES[p]||[]).forEach(function(w){ var k=w.w.toLowerCase(); if(!seen[k]){ seen[k]=1; out.push(w); } }); });
+    return out;
+  }
+  function scopeOf(id){
+    for(var i=0;i<UNITS.length;i++){
+      var u=UNITS[i];
+      if(u.id===id) return {title:u.icon+" "+u.name, words:wordsOfPages(pagesOf(u)), pool:wordsOfPages(pagesOf(u)), n:20, unit:u};
+      var L=(u.lessons||[]).filter(function(x){return x.id===id})[0];
+      if(L) return {title:"Lesson "+L.n+" · "+L.title, words:wordsOfPages(L.pages), pool:wordsOfPages(pagesOf(u)), n:12, unit:u};
+    }
+    return null;
+  }
+  function distractors(w, pool, key, k){
+    var used={}; used[String(w[key]).toLowerCase()]=1; used["ar:"+w.ar]=1;
+    var out=[];
+    function tryAdd(x){
+      if(out.length>=k || !x[key]) return;
+      var v=String(x[key]).toLowerCase();
+      if(used[v] || used["ar:"+x.ar]) return;
+      used[v]=1; used["ar:"+x.ar]=1; out.push(x);
+    }
+    shuffle(pool).forEach(tryAdd);
+    if(out.length<k) shuffle(wordsOfPages(nums)).forEach(tryAdd);
+    return out;
+  }
+  function makeQuestion(w, pool, i){
+    var types=["listen","ar2en","en2ar"];
+    if(w.img) types.push("pic","pic");
+    if(w.ex && findTarget(w.ex,w.w)) types.push("blank","blank");
+    var t=types[Math.floor(Math.random()*types.length)];
+    var key = t==="en2ar" ? "ar" : "w";
+    var opts=shuffle([w].concat(distractors(w,pool,key,3)));
+    var q={type:t, word:w, opts:opts, key:key};
+    if(t==="blank"){ var m=findTarget(w.ex,w.w); q.before=w.ex.slice(0,m.index); q.after=w.ex.slice(m.index+m[0].length); }
+    return q;
+  }
+  var Q=null;
+  function startQuiz(id, onlyWords){
+    var s=scopeOf(id); if(!s) return;
+    stopSpeech();
+    var words = onlyWords || shuffle(s.words).slice(0, Math.min(s.n, s.words.length));
+    Q={id:id, title:s.title, unit:s.unit, items:words.map(function(w,i){ return makeQuestion(w, s.pool, i); }), i:0, score:0, wrong:[], locked:false, retry:!!onlyWords};
+    $("quizTitle").textContent="📝 "+s.title;
+    $("ttl").textContent="اختبار";
+    go("quiz");
+    renderQ();
+  }
+  function tone(ok){
+    try{
+      var C=window.AudioContext||window.webkitAudioContext; if(!C) return;
+      var c=tone.c||(tone.c=new C()), o=c.createOscillator(), g=c.createGain();
+      o.type="sine"; o.connect(g); g.connect(c.destination);
+      var t=c.currentTime; g.gain.setValueAtTime(.18,t); g.gain.exponentialRampToValueAtTime(.001,t+.35);
+      o.frequency.setValueAtTime(ok?660:220,t); if(ok) o.frequency.setValueAtTime(880,t+.12);
+      o.start(t); o.stop(t+.36);
+    }catch(e){}
+  }
+  function renderQ(){
+    var b=$("quizBody"); b.innerHTML="";
+    if(Q.i>=Q.items.length) return renderResult();
+    var q=Q.items[Q.i], w=q.word; Q.locked=false;
+    var top=document.createElement("div"); top.className="qtop";
+    top.innerHTML='<div class="qbar"><i style="width:'+Math.round(Q.i*100/Q.items.length)+'%"></i></div><span class="qnum">'+(Q.i+1)+' / '+Q.items.length+'</span>';
+    b.appendChild(top);
+    var card=document.createElement("div"); card.className="qcard";
+    var ask="", show="";
+    if(q.type==="listen"){ ask="🎧 اسمع واختار الكلمة"; show='<button class="qplay" id="qPlay" aria-label="اسمع">🔊</button>'; }
+    else if(q.type==="pic"){ ask="🖼️ إيه الكلمة دي؟"; show='<img class="qimg" alt="" src="'+esc(w.img)+'">'; }
+    else if(q.type==="ar2en"){ ask="🔤 إيه الكلمة بالإنجليزي؟"; show='<div class="qar">'+esc(w.ar)+'</div>'+(w.emo?'<div class="qemo">'+esc(w.emo)+'</div>':''); }
+    else if(q.type==="en2ar"){ ask="🔤 إيه معنى الكلمة؟"; show='<div class="qen">'+esc(w.w)+'</div><button class="spk2" id="qPlay" aria-label="اسمع">🔊</button>'; }
+    else { ask="✏️ كمّل الجملة"; show='<div class="qsent">'+esc(q.before)+'<b>&nbsp;?&nbsp;</b>'+esc(q.after)+'</div>'; }
+    card.innerHTML='<div class="qask">'+ask+'</div>'+show;
+    var opts=document.createElement("div"); opts.className="opts";
+    q.opts.forEach(function(o){
+      var btn=document.createElement("button"); btn.className="opt"+(q.key==="ar"?" arx":"");
+      btn.textContent = q.key==="ar" ? o.ar : o.w;
+      btn._right=(o===w);
+      btn.onclick=function(){ answer(btn, o===w, opts); };
+      opts.appendChild(btn);
+    });
+    card.appendChild(opts);
+    var fb=document.createElement("div"); fb.className="qfb"; fb.id="qfb"; card.appendChild(fb);
+    b.appendChild(card);
+    var play=$("qPlay"); if(play){ play.onclick=function(){ stopSpeech(); say(w.w); }; }
+    if(q.type==="listen") setTimeout(function(){ say(w.w); }, 250);
+  }
+  function answer(btn, right, opts){
+    if(Q.locked) return; Q.locked=true;
+    var q=Q.items[Q.i];
+    [].forEach.call(opts.children,function(x){ x.disabled=true; if(x._right) x.classList.add("ok"); });
+    var fb=$("qfb");
+    if(right){ Q.score++; tone(true); fb.className="qfb ok"; fb.textContent=["👏 برافو!","🌟 ممتاز!","✅ صح!","🎉 شاطر!"][Q.score%4]; }
+    else { btn.classList.add("bad"); tone(false); Q.wrong.push(q.word); fb.className="qfb bad"; fb.textContent="❌ الإجابة الصح: "+(q.key==="ar"?q.word.ar:q.word.w); }
+    stopSpeech();
+    var spoken = q.type==="blank" ? q.word.ex : q.word.w;
+    setTimeout(function(){
+      say(spoken).then(function(){ setTimeout(function(){ if(view==="quiz" && Q && Q.items[Q.i]===q){ Q.i++; renderQ(); } }, right?400:1200); });
+    }, 300);
+  }
+  function renderResult(){
+    var b=$("quizBody"); b.innerHTML="";
+    var total=Q.items.length, pct=Math.round(Q.score*100/total);
+    var stars = pct>=90?3 : pct>=70?2 : pct>=40?1 : 0;
+    if(!Q.retry){
+      var prev=getBest(Q.id);
+      if(!prev || Q.score/total > prev.score/prev.total){ store("best:"+Q.id, JSON.stringify({score:Q.score,total:total,at:Date.now()})); }
+    }
+    var r=document.createElement("div"); r.className="result";
+    r.innerHTML='<div class="stars">'+"⭐".repeat(stars)+"☆".repeat(3-stars)+'</div>'+
+      '<div class="score">'+Q.score+' / '+total+'</div>'+
+      '<div class="qask">'+(pct>=90?"🏆 ممتاز جدًا!":pct>=70?"👏 جميل جدًا!":pct>=40?"💪 كويس، كمّل تدريب!":"📖 راجع الكلمات وجرّب تاني")+'</div>';
+    if(Q.wrong.length){
+      var wl=document.createElement("div"); wl.className="wrong";
+      wl.innerHTML='<b style="direction:rtl;text-align:right">📌 الكلمات اللي محتاجة مراجعة:</b>'+Q.wrong.map(function(w){ return '<div>'+esc(w.w)+' <span>'+esc(w.ar)+'</span></div>'; }).join("");
+      r.appendChild(wl);
+    }
+    var row=document.createElement("div"); row.className="testsrow";
+    var again=document.createElement("button"); again.className="tbtn2"; again.textContent="🔁 اختبار جديد"; again.onclick=function(){ startQuiz(Q.id); };
+    row.appendChild(again);
+    if(Q.wrong.length){ var ww=Q.wrong.slice(); var rw=document.createElement("button"); rw.className="tbtn2 unit"; rw.textContent="🎯 أعيد الغلطات بس"; rw.onclick=function(){ startQuiz(Q.id, ww); }; row.appendChild(rw); }
+    var back=document.createElement("button"); back.className="chip"; back.textContent="↩ رجوع للوحدة"; back.onclick=function(){ showUnit(Q.unit.id); }; row.appendChild(back);
+    r.appendChild(row);
+    b.appendChild(r);
+    if(stars===3) say("Excellent!"); else if(stars===2) say("Well done!");
+  }
+  $("quizExit").onclick=function(){ if(Q&&Q.unit) showUnit(Q.unit.id); else renderHome(); };
 
   // ---------- settings view ----------
   function fillVoices(){
@@ -540,6 +742,7 @@ a.lnk{color:var(--blue);font-weight:800}
   window.onAndroidBack=function(){
     if(!$("pad").hidden){ $("pad").hidden=true; return true; }
     if(view==="page"){ var u=unitOf(current); if(u){ showUnit(u.id,current); return true; } }
+    if(view==="quiz"){ $("quizExit").click(); return true; }
     if(view!=="home"){ renderHome(); return true; }
     return false;
   };
