@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>كلمات كتابي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&family=Fredoka:wght@500;600&display=swap">
+<style>
+/* Layout: notebook page; big page-number pad on top, word cards below (2 columns on tablets) */
+:root{
+  --paper:#fbfaf4; --line:#dce6f3; --margin:#e46a6a; --ink:#1f2a44; --muted:#5d6782;
+  --blue:#2f6fde; --sun:#ffcf3f; --card:#ffffff; --green:#2e9b5e;
+  --ar:"Baloo Bhaijaan 2","Noto Naskh Arabic","Segoe UI",Tahoma,sans-serif;
+  --en:"Fredoka","Baloo Bhaijaan 2",Roboto,system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;min-height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--ar);font-size:18px;line-height:1.55;
+  background-image:repeating-linear-gradient(to bottom,transparent 0 33px,var(--line) 33px 34px);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:1100px;margin:0 auto;padding-block:16px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:16px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:1.8rem;font-weight:800;line-height:1.2}
+.unit{font-family:var(--en);font-weight:600;color:var(--blue);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:2px 14px;font-size:1rem}
+.pager{display:flex;align-items:center;justify-content:center;gap:14px}
+.arrow{width:72px;height:72px;border-radius:50%;border:none;background:var(--blue);color:#fff;font-size:2rem;cursor:pointer;flex:none}
+.pnum{min-width:180px;height:88px;border-radius:24px;border:4px solid var(--blue);background:var(--card);color:var(--ink);
+  font:600 3rem var(--en);cursor:pointer;font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center;gap:10px}
+.pnum small{font:700 1rem var(--ar);color:var(--muted)}
+button:focus-visible{outline:4px solid var(--sun);outline-offset:3px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.bar h2{margin:0;font-size:1.3rem}
+.big{background:var(--sun);color:var(--ink);border:none;border-radius:18px;padding:10px 20px;font:800 1.15rem var(--ar);cursor:pointer}
+.big.stop{background:var(--margin);color:#fff}
+.grid{direction:ltr;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:14px}
+.w{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:14px 16px;display:grid;
+  grid-template-columns:auto 1fr auto;gap:2px 14px;align-items:center;transition:box-shadow .2s,border-color .2s}
+.w.on{border-color:var(--sun);box-shadow:0 0 0 5px var(--sun)}
+.n{font:600 1rem var(--en);color:var(--muted);min-width:1.6em;text-align:center}
+.word{font:600 2rem var(--en);direction:ltr;text-align:left;min-width:0;overflow-wrap:anywhere;line-height:1.2}
+.ar{grid-column:2/3;color:var(--muted);font-size:1.05rem;direction:rtl;text-align:left}
+.spk{width:64px;height:64px;border-radius:50%;border:none;background:var(--sun);font-size:1.9rem;cursor:pointer;grid-row:1/3;grid-column:3}
+.ex{grid-column:1/-1;display:flex;gap:10px;align-items:center;border-top:2px dashed var(--line);margin-top:8px;padding-top:8px}
+.ex p{margin:0;flex:1;min-width:0;direction:ltr;text-align:left;font:500 1.25rem var(--en)}
+.ex mark{background:var(--sun);color:var(--ink);border-radius:5px;padding:0 4px}
+.spk2{width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:1.4rem;cursor:pointer;flex:none}
+.empty{background:var(--card);border:3px dashed var(--line);border-radius:22px;padding:28px 18px;text-align:center;font-size:1.25rem;display:flex;flex-direction:column;gap:12px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip{font:600 1.1rem var(--en);min-width:56px;padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+details.units{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px 16px}
+details.units summary{cursor:pointer;font-weight:800;font-size:1.15rem}
+.ublock{margin-top:12px}
+.ublock h3{margin:0 0 6px;font:600 1.05rem var(--en);color:var(--blue);direction:ltr;text-align:left}
+.ublock .chips{justify-content:flex-start;direction:ltr}
+/* keypad */
+.pad{position:fixed;inset:0;background:rgba(31,42,68,.55);display:flex;align-items:center;justify-content:center;z-index:10;padding:16px}
+.padbox{background:var(--paper);border-radius:28px;padding:18px;width:min(420px,100%);display:flex;flex-direction:column;gap:12px}
+.padshow{height:84px;border-radius:20px;border:4px solid var(--blue);background:var(--card);font:600 3rem var(--en);display:flex;align-items:center;justify-content:center;direction:ltr}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;direction:ltr}
+.keys button{height:76px;border-radius:20px;border:2px solid var(--line);background:var(--card);font:600 2rem var(--en);color:var(--ink);cursor:pointer}
+.keys .ok{background:var(--green);color:#fff;border-color:var(--green)}
+.keys .del{background:var(--margin);color:#fff;border-color:var(--margin)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:14px;font-size:1rem;z-index:20;max-width:90vw}
+.update{background:var(--green);color:#fff;border-radius:18px;padding:12px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.update a{color:var(--ink);background:var(--sun);padding:8px 16px;border-radius:12px;text-decoration:none;font-weight:800}
+@media (max-width:520px){.word{font-size:1.6rem}.pnum{min-width:130px;font-size:2.4rem}.arrow{width:60px;height:60px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="update" id="apkUpdate" hidden><span>🆕 في نسخة جديدة من التطبيق</span><a id="apkLink" href="#">⬇️ نزّلها</a></div>
+  <header>
+    <h1>📖 كلمات كتابي</h1>
+    <span class="unit" id="unitLabel"></span>
+  </header>
+
+  <div class="pager">
+    <button class="arrow" id="prev" aria-label="الصفحة اللي قبل">→</button>
+    <button class="pnum" id="pnum" aria-label="اكتب رقم الصفحة"><small>صفحة</small><span id="pnumVal">–</span></button>
+    <button class="arrow" id="next" aria-label="الصفحة اللي بعد">←</button>
+  </div>
+
+  <section id="result" aria-live="polite"></section>
+
+  <details class="units" id="units">
+    <summary>📚 كل الصفحات اللي فيها كلمات</summary>
+    <div id="unitList"></div>
+  </details>
+</div>
+
+<div class="pad" id="pad" hidden>
+  <div class="padbox">
+    <div class="padshow" id="padShow"></div>
+    <div class="keys" id="keys"></div>
+  </div>
+</div>
+
+<script src="data/pages.js"></script>
+<script>
+(function(){
+  var $ = function(id){return document.getElementById(id)};
+  var BOOK = window.BOOK || {pages:{},units:[]};
+  var PAGES = BOOK.pages || {};
+  var nums = Object.keys(PAGES).map(Number).filter(function(n){return PAGES[n] && PAGES[n].length}).sort(function(a,b){return a-b});
+  var current = null, reading = false;
+
+  // ---------- speech: Android native TTS first, browser voice second ----------
+  var native = window.AndroidTTS;
+  var doneCb = null;
+  window.__ttsDone = function(){ var f = doneCb; doneCb = null; if(f) f(); };
+  var voice = null;
+  function pickVoice(){
+    if(!window.speechSynthesis) return;
+    var vs = speechSynthesis.getVoices().filter(function(v){return /en[-_]US/i.test(v.lang)});
+    var pref = ["Samantha","Google US English","Microsoft Aria","Microsoft Jenny","Allison","Ava"];
+    vs.sort(function(a,b){return rank(b)-rank(a)});
+    function rank(v){for(var i=0;i<pref.length;i++) if(v.name.indexOf(pref[i])>=0) return 10-i; return 0}
+    voice = vs[0] || null;
+  }
+  if(window.speechSynthesis){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+  function speakable(t){ return String(t).replace(/\s*\/\s*/g,", ").replace(/\s*=\s*/g,", ").replace(/\.\.\.|…/g," ").replace(/\+/g," ").replace(/\s+/g," ").trim(); }
+  function say(text, slow){
+    text = speakable(text);
+    return new Promise(function(res){
+      var rate = slow ? 0.75 : 0.9;
+      if(native){
+        doneCb = res;
+        try{ native.speak(String(text), rate); }catch(e){ doneCb=null; res(); }
+        setTimeout(function(){ if(doneCb===res){ doneCb=null; res(); } }, 15000);
+        return;
+      }
+      if(!window.speechSynthesis){ toast("الجهاز ده مبيدعمش النطق"); return res(); }
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = "en-US"; if(voice) u.voice = voice; u.rate = rate;
+      u.onend = u.onerror = function(){res()};
+      speechSynthesis.speak(u);
+    });
+  }
+  function stopSpeech(){ reading=false; doneCb=null; if(native){try{native.stop()}catch(e){}} else if(window.speechSynthesis) speechSynthesis.cancel(); }
+  function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+
+  // ---------- helpers ----------
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function mark(ex, w){
+    var e = esc(ex);
+    var parts = String(w||"").split("/").map(function(p){return p.replace(/[.…!?+]/g," ").trim().split(/\s+/)[0]}).filter(function(p){return p && p.length>1});
+    parts.sort(function(a,b){return b.length-a.length});
+    for(var i=0;i<parts.length;i++){
+      var re = new RegExp("\\b("+parts[i].replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"\\w*)","i");
+      if(re.test(e)) return e.replace(re,"<mark>$1</mark>");
+    }
+    return e;
+  }
+  function unitOf(n){ var u=(BOOK.units||[]).filter(function(u){return n>=u.from && n<=u.to})[0]; return u?u.name:""; }
+  var tt; function toast(t){ var d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); clearTimeout(tt); tt=setTimeout(function(){d.remove()},2500); }
+  function save(n){ try{localStorage.setItem("page",n)}catch(e){} }
+  function nearest(n){
+    var before=null, after=null;
+    nums.forEach(function(x){ if(x<n) before=x; if(x>n && after===null) after=x; });
+    return [before,after].filter(function(x){return x!==null});
+  }
+
+  // ---------- render ----------
+  function show(n){
+    n = parseInt(n,10); if(!n || n<1) return;
+    stopSpeech();
+    current = n; save(n);
+    $("pnumVal").textContent = n;
+    $("unitLabel").textContent = unitOf(n);
+    $("unitLabel").hidden = !unitOf(n);
+    var res = $("result"); res.innerHTML = "";
+    var words = PAGES[n];
+    if(!words || !words.length){
+      var box = document.createElement("div"); box.className="empty";
+      box.innerHTML = "<div>📭 صفحة <b>"+n+"</b> مفيهاش كلمات جديدة</div>";
+      var near = nearest(n);
+      if(near.length){
+        var t=document.createElement("div"); t.textContent="👉 أقرب صفحات فيها كلمات:"; box.appendChild(t);
+        var c=document.createElement("div"); c.className="chips";
+        near.forEach(function(x){ c.appendChild(chip(x)); });
+        box.appendChild(c);
+      }
+      res.appendChild(box); refreshChips(); return;
+    }
+    var bar=document.createElement("div"); bar.className="bar";
+    var h=document.createElement("h2"); h.textContent="📄 صفحة "+n+" · "+words.length+" كلمة";
+    var all=document.createElement("button"); all.className="big"; all.textContent="🔊 اقرأ الكل";
+    all.onclick=function(){ readAll(all); };
+    bar.appendChild(h); bar.appendChild(all); res.appendChild(bar);
+    var ol=document.createElement("ol"); ol.className="grid";
+    words.forEach(function(w,i){
+      var li=document.createElement("li"); li.className="w";
+      li.innerHTML='<span class="n">'+(i+1)+'</span><span class="word">'+esc(w.w)+'</span>'+
+        '<button class="spk" aria-label="انطق">🔊</button>'+
+        (w.ar?'<span class="ar">'+esc(w.ar)+'</span>':'')+
+        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'');
+      li.querySelector(".spk").onclick=function(){ stopSpeech(); flash(li); say(w.w); };
+      var b2=li.querySelector(".spk2"); if(b2) b2.onclick=function(){ stopSpeech(); flash(li); say(w.ex); };
+      li._w=w; ol.appendChild(li);
+    });
+    res.appendChild(ol);
+    refreshChips();
+    window.scrollTo(0,0);
+  }
+  function flash(li){ document.querySelectorAll(".w.on").forEach(function(x){x.classList.remove("on")}); li.classList.add("on"); setTimeout(function(){li.classList.remove("on")},1600); }
+  async function readAll(btn){
+    if(reading){ stopSpeech(); btn.textContent="🔊 اقرأ الكل"; btn.classList.remove("stop"); return; }
+    reading=true; btn.textContent="⏹️ وقّف"; btn.classList.add("stop");
+    var items=[].slice.call(document.querySelectorAll(".w"));
+    for(var i=0;i<items.length && reading;i++){
+      var li=items[i], w=li._w;
+      li.classList.add("on"); li.scrollIntoView({block:"center",behavior:"smooth"});
+      await say(w.w); await wait(450);
+      if(reading && w.ex){ await say(w.ex); await wait(650); }
+      li.classList.remove("on");
+    }
+    reading=false; btn.textContent="🔊 اقرأ الكل"; btn.classList.remove("stop");
+  }
+  function chip(n){ var b=document.createElement("button"); b.className="chip"+(n===current?" on":""); b.textContent=n; b.onclick=function(){ $("units").open=false; show(n); }; return b; }
+  function refreshChips(){
+    var list=$("unitList"); list.innerHTML="";
+    var groups=(BOOK.units||[]).map(function(u){return {u:u,ps:nums.filter(function(n){return n>=u.from&&n<=u.to})}});
+    var used={}; groups.forEach(function(g){g.ps.forEach(function(p){used[p]=1})});
+    var rest=nums.filter(function(n){return !used[n]}); if(rest.length) groups.unshift({u:{name:"Starter"},ps:rest});
+    groups.forEach(function(g){
+      if(!g.ps.length) return;
+      var d=document.createElement("div"); d.className="ublock";
+      var h=document.createElement("h3"); h.textContent=g.u.name; d.appendChild(h);
+      var c=document.createElement("div"); c.className="chips"; g.ps.forEach(function(p){c.appendChild(chip(p))}); d.appendChild(c);
+      list.appendChild(d);
+    });
+  }
+
+  // ---------- keypad ----------
+  var typed="";
+  var keys=["1","2","3","4","5","6","7","8","9","⌫","0","✔"];
+  keys.forEach(function(k){
+    var b=document.createElement("button"); b.textContent=k;
+    if(k==="✔") b.className="ok"; if(k==="⌫") b.className="del";
+    b.onclick=function(){
+      if(k==="⌫") typed=typed.slice(0,-1);
+      else if(k==="✔"){ $("pad").hidden=true; if(typed) show(typed); return; }
+      else if(typed.length<3) typed+=k;
+      $("padShow").textContent=typed||"؟";
+    };
+    $("keys").appendChild(b);
+  });
+  $("pnum").onclick=function(){ typed=""; $("padShow").textContent="؟"; $("pad").hidden=false; };
+  $("pad").onclick=function(e){ if(e.target===$("pad")) $("pad").hidden=true; };
+  // arrows jump between vocabulary pages only
+  $("prev").onclick=function(){ var p=nums.filter(function(x){return x<(current||0)}); if(p.length) show(p[p.length-1]); else toast("ده أول صفحة فيها كلمات"); };
+  $("next").onclick=function(){ var p=nums.filter(function(x){return x>(current||0)}); if(p.length) show(p[0]); else toast("ده آخر صفحة فيها كلمات"); };
+
+  // called by the Android app when a newer APK exists
+  window.showApkUpdate=function(url){ $("apkLink").href=url; $("apkUpdate").hidden=false; };
+
+  var start=null; try{start=parseInt(localStorage.getItem("page"),10)}catch(e){}
+  show(start || nums[0] || 1);
+})();
+</script>
+</body>
+</html>

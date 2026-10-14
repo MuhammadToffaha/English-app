@@ -1,0 +1,59 @@
+name: Build Android app
+
+# Builds a new APK when the Android code changes (or on demand).
+# Word/content changes in web/ do NOT need a new APK: the app downloads them on launch.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Bundle the web app inside the APK
+        run: |
+          rm -rf android/app/src/main/assets/web
+          mkdir -p android/app/src/main/assets
+          cp -r web android/app/src/main/assets/web
+          git log -1 --format=%H -- web > android/app/src/main/assets/web/sha.txt
+
+      - name: Build APK
+        working-directory: android
+        run: gradle assembleRelease -PversionCode=${{ github.run_number }} --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk kalimat.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kalimat-apk
+          path: kalimat.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Kalimat v${{ github.run_number }}
+          body: "📱 Download kalimat.apk below and install it on the tablet."
+          files: kalimat.apk
+          make_latest: true
