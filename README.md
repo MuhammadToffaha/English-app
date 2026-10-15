@@ -17,7 +17,7 @@ On launch the kid picks **Primary 3** or **Primary 4**, then types a page number
 
 ## 🧒 Using it
 
-- 🎓 **First screen**: pick Primary 3 or Primary 4 (🔁 to switch later)
+- 🎓 **First screen**: pick Primary 3 or Primary 4 (🏠 always brings you back here)
 - 🏠 **Home**: pick a unit → all its words, page by page, with pictures from the book where the book has them
 - 🔢 **Page pad**: type the printed page number → that page's words in book order
 - 🔊 tap the speaker or the picture to hear the word; 🗣️ to hear the example

@@ -206,7 +206,7 @@ a.lnk{color:var(--blue);font-weight:800}
 
   <!-- HOME -->
   <section id="vHome" class="stack">
-    <div class="gradebar"><span class="gname" id="gName"></span><button class="chip" id="switchGrade">🔁 غيّر الصف</button></div>
+    <div class="gradebar"><span class="gname" id="gName"></span></div>
     <button class="findbig" id="findBig">🔢 اكتب رقم الصفحة <span class="n">#</span></button>
     <h2>📚 اختار الوحدة</h2>
     <div class="units" id="units"></div>
@@ -459,7 +459,7 @@ a.lnk{color:var(--blue);font-weight:800}
   function go(v){
     stopSpeech(); view=v;
     ["Grade","Home","Unit","Page","Set","Quiz"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
-    $("homeBtn").classList.toggle("on", v==="home");
+    $("homeBtn").classList.toggle("on", v==="grade");
     $("setBtn").classList.toggle("on", v==="set");
     window.scrollTo(0,0);
   }
@@ -791,9 +791,8 @@ a.lnk{color:var(--blue);font-weight:800}
   function openPad(){ typed=""; $("padShow").textContent="؟"; $("pad").hidden=false; }
   $("pnum").onclick=openPad; $("padBtn").onclick=openPad; $("findBig").onclick=openPad;
   $("pad").onclick=function(e){ if(e.target===$("pad")) $("pad").hidden=true; };
-  $("homeBtn").onclick=function(){ if(G) renderHome(); else renderGrades(); };
+  $("homeBtn").onclick=renderGrades;
   $("setBtn").onclick=function(){ if(view==="set"){ if(G) renderHome(); else renderGrades(); } else renderSettings(); };
-  $("switchGrade").onclick=renderGrades;
 
   // ---------- grade picker ----------
   function renderGrades(){
