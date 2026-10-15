@@ -21,6 +21,8 @@ On launch the kid picks **Primary 3** or **Primary 4**, then types a page number
 - 🏠 **Home**: pick a unit → all its words, page by page, with pictures from the book where the book has them
 - 🔢 **Page pad**: type the printed page number → that page's words in book order
 - 🔊 tap the speaker or the picture to hear the word; 🗣️ to hear the example
+- 🧠 **10 words a day** (home card): mostly words the kid got wrong before + words from the last unit opened; quiz + spelling mixed. Finish it → 🔥 days-in-a-row streak and a new sticker 🎁. A word leaves the review list after two right answers.
+- ✍️ **Spelling**: every lesson and unit has ✍️ إملاء: hear the word, see the picture + Arabic, tap letter tiles in order (Primary 4 gets 2 extra trick letters). 💡 shows the next letter.
 - 📝 **Tests**: every lesson has a test (12 questions) and every unit has a full test (20 questions): listen, picture, Arabic ↔ English, complete the sentence. Best score is saved with ⭐, and "🎯 retry mistakes" repeats only the wrong words
 - ⚙️ **Settings**: speed, pitch, which male voice, show/hide pictures · Arabic · examples, and **🔄 check for updates / install the new version**
 

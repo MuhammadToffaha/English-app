@@ -139,6 +139,35 @@ a.lnk{color:var(--blue);font-weight:800}
 .best{font:600 .95rem var(--en);background:#fff6d6;color:var(--ink);border-radius:999px;padding:2px 10px;direction:ltr}
 .ucard .best{justify-self:start;grid-column:2}
 .testsrow{display:flex;gap:10px;flex-wrap:wrap}
+.tbtn2.spell{background:#8a4fd8}
+/* daily words */
+.daily{display:flex;align-items:center;gap:14px;width:100%;text-align:right;background:linear-gradient(135deg,#fff6d6,#ffe9a8);border:3px solid var(--sun);border-radius:26px;padding:14px 18px}
+.daily .dic{font-size:2.8rem;line-height:1}
+.daily .dt{flex:1;display:flex;flex-direction:column;gap:2px}
+.daily .dt b{font-size:1.3rem}
+.daily .dt span{color:var(--muted);font-size:1rem}
+.daily .fire{font:600 1.4rem var(--en);direction:ltr;background:#fff;border-radius:999px;padding:4px 14px;white-space:nowrap}
+.daily.done{background:#e3f6ea;border-color:var(--green)}
+.sticker{font-size:5rem;line-height:1;animation:pop .6s ease}
+@keyframes pop{0%{transform:scale(.3)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.stickers{font-size:1.8rem;letter-spacing:4px;direction:ltr;text-align:center;overflow-wrap:anywhere}
+/* spelling */
+.qar.sm{font-size:1.5rem}
+.qplay.small{width:84px;height:84px;font-size:2.4rem}
+.slots{direction:ltr;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;width:100%}
+.slot{width:46px;height:58px;border-bottom:5px solid var(--blue);background:var(--paper);border-radius:10px 10px 4px 4px;display:flex;align-items:center;justify-content:center;font:600 2rem var(--en);color:var(--ink)}
+.slot.fixed{border-bottom-color:transparent;background:transparent;color:var(--muted)}
+.slot.next{background:#fff6d6;box-shadow:0 0 0 3px var(--sun)}
+.slot.got{color:var(--green)}
+.gap{width:22px}
+.tiles{direction:ltr;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%}
+.tile{width:64px;height:64px;border-radius:18px;border:3px solid var(--line);background:var(--card);font:600 2rem var(--en);box-shadow:0 4px 0 var(--line)}
+.tile:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line)}
+.tile.used{visibility:hidden}
+.tile.no{border-color:var(--margin);background:#fde2e2;animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.hint{border:none;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:8px 16px;font:800 1.05rem var(--ar)}
+@media (max-width:560px){.slot{width:36px;height:48px;font-size:1.6rem}.tile{width:54px;height:54px;font-size:1.7rem}}
 /* quiz */
 .qtop{display:flex;align-items:center;gap:12px}
 .qbar{flex:1;height:16px;border-radius:99px;background:var(--line);overflow:hidden}
@@ -207,6 +236,7 @@ a.lnk{color:var(--blue);font-weight:800}
   <!-- HOME -->
   <section id="vHome" class="stack">
     <div class="gradebar"><span class="gname" id="gName"></span></div>
+    <button class="daily" id="dailyBtn"></button>
     <button class="findbig" id="findBig">🔢 اكتب رقم الصفحة <span class="n">#</span></button>
     <h2>📚 اختار الوحدة</h2>
     <div class="units" id="units"></div>
@@ -216,7 +246,7 @@ a.lnk{color:var(--blue);font-weight:800}
   <section id="vUnit" hidden>
     <div class="stack">
       <div class="bar"><h2 id="unitTitle"></h2><button class="big" id="unitReadAll">🔊 اقرأ الوحدة</button></div>
-      <div class="testsrow"><button class="tbtn2 unit" id="unitTest">📝 اختبار الوحدة كلها</button><span class="best" id="unitBest" hidden></span></div>
+      <div class="testsrow"><button class="tbtn2 unit" id="unitTest">📝 اختبار الوحدة كلها</button><button class="tbtn2 spell" id="unitSpell">✍️ إملاء الوحدة</button><span class="best" id="unitBest" hidden></span></div>
       <div class="chips" id="unitChips"></div>
       <div id="unitList" class="stack"></div>
     </div>
@@ -477,6 +507,7 @@ a.lnk{color:var(--blue);font-weight:800}
     });
     $("ttl").textContent="📖 "+APP;
     $("gName").textContent=G.icon+" "+G.en+" · "+G.ar;
+    renderDailyBtn();
     go("home");
   }
 
@@ -495,6 +526,8 @@ a.lnk{color:var(--blue);font-weight:800}
       var t=document.createElement("h3"); t.textContent="Lesson "+L.n+" · "+L.title; head.appendChild(t);
       var tb=document.createElement("button"); tb.className="tbtn2"; tb.innerHTML="📝 اختبار الدرس "+bestBadge(L.id);
       tb.onclick=function(){ startQuiz(L.id); }; head.appendChild(tb);
+      var sb=document.createElement("button"); sb.className="tbtn2 spell"; sb.innerHTML="✍️ إملاء "+bestBadge("sp:"+L.id);
+      sb.onclick=function(){ startSpell(L.id); }; head.appendChild(sb);
       box.appendChild(head);
       var c0=document.createElement("button"); c0.className="chip"; c0.textContent="L"+L.n;
       c0.onclick=function(){ box.scrollIntoView({behavior:"smooth"}); }; chips.appendChild(c0);
@@ -508,6 +541,7 @@ a.lnk{color:var(--blue);font-weight:800}
       list.appendChild(box);
     });
     $("unitTest").onclick=function(){ startQuiz(u.id); };
+    $("unitSpell").onclick=function(){ startSpell(u.id); };
     var ub=$("unitBest"), bs=getBest(u.id); ub.hidden=!bs; if(bs) ub.textContent="⭐ أحسن نتيجة "+bs.score+"/"+bs.total;
     makeReadBtn($("unitReadAll"), "🔊 اقرأ الوحدة", function(){return $("unitList")});
     go("unit");
@@ -604,16 +638,88 @@ a.lnk{color:var(--blue);font-weight:800}
     if(t==="blank"){ var m=findTarget(w.ex,w.w); q.before=w.ex.slice(0,m.index); q.after=w.ex.slice(m.index+m[0].length); }
     return q;
   }
+  // ---------- mistakes memory (per grade): wrong = +2, right = -1, so a word needs two good answers to leave ----------
+  function wkey(w){ return String(w.w).toLowerCase(); }
+  function getMiss(){ try{ return JSON.parse(load(gk("miss"))||"{}")||{}; }catch(e){ return {}; } }
+  function noteAnswer(w, right){
+    var m=getMiss(), k=wkey(w), cur=m[k]||0;
+    if(right){ if(cur>0){ cur--; if(cur<=0) delete m[k]; else m[k]=cur; } }
+    else m[k]=Math.min(cur+2, 9);
+    store(gk("miss"), JSON.stringify(m));
+  }
+
+  // ---------- spelling ----------
+  function spellText(w){ return String(w.w).split(" / ")[0].replace(/\.\.\.|…|[?!.]/g,"").replace(/\s+/g," ").trim(); }
+  function canSpell(w){ var t=spellText(w), n=t.replace(/[^A-Za-z]/g,"").length; return n>=2 && n<=12 && t.split(" ").length<=3; }
+  function spellQ(w){ return {type:"spell", word:w}; }
+
   var Q=null;
-  function startQuiz(id, onlyWords){
-    var s=scopeOf(id); if(!s) return;
+  function startSession(o){
     stopSpeech();
-    var words = onlyWords || shuffle(s.words).slice(0, Math.min(s.n, s.words.length));
-    Q={id:id, title:s.title, unit:s.unit, items:words.map(function(w,i){ return makeQuestion(w, s.pool, i); }), i:0, score:0, wrong:[], locked:false, retry:!!onlyWords};
-    $("quizTitle").textContent="📝 "+s.title;
-    $("ttl").textContent="اختبار";
+    Q={id:o.id, mode:o.mode, title:o.title, unit:o.unit||null, items:o.items, i:0, score:0, wrong:[], locked:false, retry:!!o.retry, base:o.base};
+    $("quizTitle").textContent=o.title;
+    $("ttl").textContent= o.mode==="spell" ? "إملاء" : o.mode==="daily" ? "كلمات النهارده" : "اختبار";
     go("quiz");
     renderQ();
+  }
+  function startQuiz(id, onlyWords){
+    var s=scopeOf(id); if(!s) return;
+    var words = onlyWords || shuffle(s.words).slice(0, Math.min(s.n, s.words.length));
+    startSession({id:id, base:id, mode:"quiz", title:"📝 "+s.title, unit:s.unit, retry:!!onlyWords,
+      items:words.map(function(w,i){ return makeQuestion(w, s.pool, i); })});
+  }
+  function startSpell(id, onlyWords){
+    var s=scopeOf(id); if(!s) return;
+    var ok=s.words.filter(canSpell);
+    if(!ok.length){ toast("مفيش كلمات للإملاء هنا"); return; }
+    var words = onlyWords || shuffle(ok).slice(0, Math.min(s.n===20?15:10, ok.length));
+    startSession({id:"sp:"+id, base:id, mode:"spell", title:"✍️ إملاء · "+s.title, unit:s.unit, retry:!!onlyWords, items:words.map(spellQ)});
+  }
+
+  // ---------- 10 words a day ----------
+  var STICKERS=["🦁","🐬","🦄","🚀","🌈","🐼","🦋","⚽","🍉","🐢","🌻","🦊","🐧","🎈","🐳","🍩","🦖","🏆","🐝","🌟"];
+  function dstr(d){ return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+  function today(){ return dstr(new Date()); }
+  function yesterday(){ var d=new Date(); d.setDate(d.getDate()-1); return dstr(d); }
+  function getJ(k, def){ try{ return JSON.parse(load(gk(k))||"null")||def; }catch(e){ return def; } }
+  function streakNow(){ var s=getJ("streak",{last:"",n:0}); return (s.last===today()||s.last===yesterday()) ? s.n : 0; }
+  function bookMap(){ var m={}; wordsOfPages(nums).forEach(function(w){ m[wkey(w)]=w; }); return m; }
+  function dailyWords(){
+    var d=getJ("daily",null), map=bookMap();
+    if(d && d.d===today()){
+      var ws=d.keys.map(function(k){return map[k]}).filter(Boolean);
+      if(ws.length) return {words:ws, done:!!d.done};
+    }
+    var all=wordsOfPages(nums), m=getMiss();
+    var weak=Object.keys(m).filter(function(k){return map[k]}).sort(function(a,b){return m[b]-m[a]}).slice(0,6).map(function(k){return map[k]});
+    var lu=UNITS.filter(function(u){return u.id===load(gk("unit"))})[0];
+    var near=lu ? wordsOfPages(pagesOf(lu)) : all;
+    var out=weak.slice(), seen={}; out.forEach(function(w){ seen[wkey(w)]=1; });
+    shuffle(near).concat(shuffle(all)).forEach(function(w){ if(out.length<10 && !seen[wkey(w)]){ seen[wkey(w)]=1; out.push(w); } });
+    out=shuffle(out);
+    store(gk("daily"), JSON.stringify({d:today(), keys:out.map(wkey), done:false}));
+    return {words:out, done:false};
+  }
+  function renderDailyBtn(){
+    var dw=dailyWords(), n=streakNow(), weak=Object.keys(getMiss()).length, b=$("dailyBtn");
+    b.className="daily"+(dw.done?" done":"");
+    b.innerHTML='<span class="dic">'+(dw.done?"✅":"🧠")+'</span><span class="dt"><b>'+(dw.done?"خلّصت كلمات النهارده! 🎉":"كلمات النهارده · 10 كلمات")+'</b><span>'+
+      (dw.done?"تقدر تلعبهم تاني":"اختبار + إملاء")+(weak?' · 🎯 '+weak+' كلمة محتاجة مراجعة':'')+'</span></span><span class="fire">🔥 '+n+'</span>';
+    b.onclick=function(){ startDaily(); };
+  }
+  function startDaily(onlyWords){
+    var words=onlyWords || dailyWords().words, pool=wordsOfPages(nums);
+    startSession({id:"daily", mode:"daily", title:"🧠 كلمات النهارده", retry:!!onlyWords,
+      items:words.map(function(w,i){ return (i%2===0 && canSpell(w)) ? spellQ(w) : makeQuestion(w, pool, i); })});
+  }
+  function finishDaily(){
+    var d=getJ("daily",{}); var first=!(d.d===today() && d.done);
+    d.done=true; store(gk("daily"), JSON.stringify(d));
+    var s=getJ("streak",{last:"",n:0});
+    if(s.last!==today()){ s.n = (s.last===yesterday()) ? s.n+1 : 1; s.last=today(); store(gk("streak"), JSON.stringify(s)); }
+    var st=getJ("stickers",[]), sticker=null;
+    if(first){ sticker=STICKERS[st.length % STICKERS.length]; st.push(sticker); store(gk("stickers"), JSON.stringify(st)); }
+    return {streak:s.n, sticker:sticker, all:st};
   }
   function tone(ok){
     try{
@@ -633,6 +739,7 @@ a.lnk{color:var(--blue);font-weight:800}
     top.innerHTML='<div class="qbar"><i style="width:'+Math.round(Q.i*100/Q.items.length)+'%"></i></div><span class="qnum">'+(Q.i+1)+' / '+Q.items.length+'</span>';
     b.appendChild(top);
     var card=document.createElement("div"); card.className="qcard";
+    if(q.type==="spell"){ b.appendChild(card); return renderSpell(q, card); }
     var ask="", show="";
     if(q.type==="listen"){ ask="🎧 اسمع واختار الكلمة"; show='<button class="qplay" id="qPlay" aria-label="اسمع">🔊</button>'; }
     else if(q.type==="pic"){ ask="🖼️ إيه الكلمة دي؟"; show='<img class="qimg" alt="" src="'+esc(w.img)+'">'; }
@@ -654,9 +761,70 @@ a.lnk{color:var(--blue);font-weight:800}
     var play=$("qPlay"); if(play){ play.onclick=function(){ stopSpeech(); say(w.w); }; }
     if(q.type==="listen") setTimeout(function(){ say(w.w); }, 250);
   }
+  function renderSpell(q, card){
+    var w=q.word, t=spellText(w);
+    card.innerHTML='<div class="qask">✍️ اسمع واكتب الكلمة</div>'+
+      (w.img?'<img class="qimg" alt="" src="'+esc(w.img)+'">':(w.emo?'<div class="qemo">'+esc(w.emo)+'</div>':''))+
+      '<div class="qar sm">'+esc(w.ar)+'</div><button class="qplay small" id="qPlay" aria-label="اسمع">🔊</button>';
+    var slots=document.createElement("div"); slots.className="slots";
+    var need=[];
+    t.split("").forEach(function(ch){
+      var el=document.createElement("span");
+      if(/[A-Za-z]/.test(ch)){ el.className="slot"; need.push({ch:ch, el:el}); }
+      else if(ch===" "){ el.className="gap"; }
+      else { el.className="slot fixed"; el.textContent=ch; }
+      slots.appendChild(el);
+    });
+    card.appendChild(slots);
+    var letters=need.map(function(n){return n.ch});
+    if(G && G.id==="p4"){ var abc="abcdefghijklmnopqrstuvwxyz"; for(var k=0;k<2;k++) letters.push(abc[Math.floor(Math.random()*26)]); }
+    var tiles=document.createElement("div"); tiles.className="tiles";
+    var pos=0, mistakes=0;
+    function mark2(){ need.forEach(function(n,i){ n.el.classList.toggle("next", i===pos); }); }
+    function place(tile){
+      need[pos].el.textContent=need[pos].ch; need[pos].el.classList.add("got"); tile.classList.add("used"); tile.disabled=true;
+      pos++; mark2();
+      if(pos>=need.length) setTimeout(function(){ finishQ(q, mistakes===0, mistakes); }, 250);
+    }
+    shuffle(letters).forEach(function(ch){
+      var tb=document.createElement("button"); tb.className="tile"; tb.textContent=ch; tb._ch=ch;
+      tb.onclick=function(){
+        if(Q.locked || pos>=need.length) return;
+        if(ch.toLowerCase()===need[pos].ch.toLowerCase()){ place(tb); }
+        else { mistakes++; tone(false); tb.classList.remove("no"); void tb.offsetWidth; tb.classList.add("no"); setTimeout(function(){tb.classList.remove("no")},400); }
+      };
+      tiles.appendChild(tb);
+    });
+    card.appendChild(tiles);
+    var row=document.createElement("div"); row.className="testsrow";
+    var hint=document.createElement("button"); hint.className="hint"; hint.textContent="💡 ساعدني";
+    hint.onclick=function(){
+      if(Q.locked || pos>=need.length) return;
+      var want=need[pos].ch.toLowerCase();
+      var tile=[].filter.call(tiles.children,function(x){ return !x.disabled && x._ch.toLowerCase()===want; })[0];
+      if(tile){ mistakes++; place(tile); }
+    };
+    row.appendChild(hint); card.appendChild(row);
+    var fb=document.createElement("div"); fb.className="qfb"; fb.id="qfb"; card.appendChild(fb);
+    mark2();
+    $("qPlay").onclick=function(){ stopSpeech(); say(w.w); };
+    setTimeout(function(){ say(w.w); }, 250);
+  }
+  function finishQ(q, right, mistakes){
+    if(Q.locked) return; Q.locked=true;
+    var fb=$("qfb");
+    noteAnswer(q.word, right);
+    if(right){ Q.score++; tone(true); fb.className="qfb ok"; fb.textContent=["👏 برافو!","🌟 ممتاز!","✅ صح!","🎉 شاطر!"][Q.score%4]; }
+    else { tone(false); Q.wrong.push(q.word); fb.className="qfb bad"; fb.textContent="💪 كتبتها بمساعدة ("+mistakes+") · هنراجعها تاني"; }
+    stopSpeech();
+    setTimeout(function(){
+      say(q.word.w).then(function(){ setTimeout(function(){ if(view==="quiz" && Q && Q.items[Q.i]===q){ Q.i++; renderQ(); } }, right?500:1200); });
+    }, 300);
+  }
   function answer(btn, right, opts){
     if(Q.locked) return; Q.locked=true;
     var q=Q.items[Q.i];
+    noteAnswer(q.word, right);
     [].forEach.call(opts.children,function(x){ x.disabled=true; if(x._right) x.classList.add("ok"); });
     var fb=$("qfb");
     if(right){ Q.score++; tone(true); fb.className="qfb ok"; fb.textContent=["👏 برافو!","🌟 ممتاز!","✅ صح!","🎉 شاطر!"][Q.score%4]; }
@@ -672,24 +840,30 @@ a.lnk{color:var(--blue);font-weight:800}
     var b=$("quizBody"); b.innerHTML="";
     var total=Q.items.length, pct=Math.round(Q.score*100/total);
     var stars = pct>=90?3 : pct>=70?2 : pct>=40?1 : 0;
-    if(!Q.retry){
+    var daily = Q.mode==="daily" ? finishDaily() : null;
+    if(!Q.retry && Q.mode!=="daily"){
       var prev=getBest(Q.id);
       if(!prev || Q.score/total > prev.score/prev.total){ store("best:"+Q.id, JSON.stringify({score:Q.score,total:total,at:Date.now()})); }
     }
     var r=document.createElement("div"); r.className="result";
     r.innerHTML='<div class="stars">'+"⭐".repeat(stars)+"☆".repeat(3-stars)+'</div>'+
       '<div class="score">'+Q.score+' / '+total+'</div>'+
-      '<div class="qask">'+(pct>=90?"🏆 ممتاز جدًا!":pct>=70?"👏 جميل جدًا!":pct>=40?"💪 كويس، كمّل تدريب!":"📖 راجع الكلمات وجرّب تاني")+'</div>';
+      '<div class="qask">'+(pct>=90?"🏆 ممتاز جدًا!":pct>=70?"👏 جميل جدًا!":pct>=40?"💪 كويس، كمّل تدريب!":"📖 راجع الكلمات وجرّب تاني")+'</div>'+
+      (daily ? (daily.sticker?'<div class="sticker">'+daily.sticker+'</div><div class="qask">🎁 كسبت ملصق جديد!</div>':'')+
+        '<div class="qask">🔥 '+daily.streak+' '+(daily.streak===1?"يوم":"أيام")+' ورا بعض · ارجع بكرة!</div>'+
+        (daily.all.length?'<div class="stickers">'+daily.all.join("")+'</div>':'') : '');
     if(Q.wrong.length){
       var wl=document.createElement("div"); wl.className="wrong";
       wl.innerHTML='<b style="direction:rtl;text-align:right">📌 الكلمات اللي محتاجة مراجعة:</b>'+Q.wrong.map(function(w){ return '<div>'+esc(w.w)+' <span>'+esc(w.ar)+'</span></div>'; }).join("");
       r.appendChild(wl);
     }
     var row=document.createElement("div"); row.className="testsrow";
-    var again=document.createElement("button"); again.className="tbtn2"; again.textContent="🔁 اختبار جديد"; again.onclick=function(){ startQuiz(Q.id); };
+    var mode=Q.mode, base=Q.base;
+    function rerun(ws){ if(mode==="spell") startSpell(base, ws); else if(mode==="daily") startDaily(ws); else startQuiz(base, ws); }
+    var again=document.createElement("button"); again.className="tbtn2"; again.textContent= mode==="daily" ? "🔁 العب تاني" : "🔁 اختبار جديد"; again.onclick=function(){ rerun(); };
     row.appendChild(again);
-    if(Q.wrong.length){ var ww=Q.wrong.slice(); var rw=document.createElement("button"); rw.className="tbtn2 unit"; rw.textContent="🎯 أعيد الغلطات بس"; rw.onclick=function(){ startQuiz(Q.id, ww); }; row.appendChild(rw); }
-    var back=document.createElement("button"); back.className="chip"; back.textContent="↩ رجوع للوحدة"; back.onclick=function(){ showUnit(Q.unit.id); }; row.appendChild(back);
+    if(Q.wrong.length){ var ww=Q.wrong.slice(); var rw=document.createElement("button"); rw.className="tbtn2 unit"; rw.textContent="🎯 أعيد الغلطات بس"; rw.onclick=function(){ rerun(ww); }; row.appendChild(rw); }
+    var uu=Q.unit, back=document.createElement("button"); back.className="chip"; back.textContent= uu ? "↩ رجوع للوحدة" : "↩ رجوع"; back.onclick=function(){ if(uu) showUnit(uu.id); else renderHome(); }; row.appendChild(back);
     r.appendChild(row);
     b.appendChild(r);
     if(stars===3) say("Excellent!"); else if(stars===2) say("Well done!");
