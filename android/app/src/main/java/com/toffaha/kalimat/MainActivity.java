@@ -248,15 +248,22 @@ public class MainActivity extends Activity {
         JSONObject info = new JSONObject();
         try {
             try {
-                boolean changed = updateContent();
+                JSONObject apk = checkApk();
+                if (apk != null) {
+                    info.put("apk", apk);
+                    if (apk.optBoolean("newer")) {
+                        final String url = apk.optString("url");
+                        ui.post(() -> web.evaluateJavascript(
+                                "window.showApkUpdate && window.showApkUpdate(" + JSONObject.quote(url) + ")", null));
+                    }
+                }
+            } catch (Exception ignored) { }
+            try {
+                boolean changed = updateContent(fromUser);
                 info.put("content", changed ? "updated" : "same");
             } catch (Exception e) {
                 info.put("error", "مفيش إنترنت أو GitHub مش متاح");
             }
-            try {
-                JSONObject apk = checkApk();
-                if (apk != null) info.put("apk", apk);
-            } catch (Exception ignored) { }
 
             final boolean reload = "updated".equals(info.optString("content"));
             if (reload) {
@@ -288,7 +295,7 @@ public class MainActivity extends Activity {
     }
 
     /** Pulls web/ from the newest commit that touched it. Returns true when something changed. */
-    private boolean updateContent() throws Exception {
+    private boolean updateContent(boolean report) throws Exception {
         JSONArray commits = new JSONArray(httpText(
                 "https://api.github.com/repos/" + REPO + "/commits?sha=" + BRANCH + "&path=web&per_page=1"));
         if (commits.length() == 0) return false;
@@ -300,13 +307,23 @@ public class MainActivity extends Activity {
 
         File tmp = new File(getFilesDir(), "web_new");
         deleteRecursive(tmp);
-        for (int i = 0; i < files.length(); i++) {
+        int n = files.length();
+        for (int i = 0; i < n; i++) {
             String f = files.getString(i);
             if (f.contains("..")) continue;
             File out = new File(tmp, f);
             out.getParentFile().mkdirs();
-            try (OutputStream o = new FileOutputStream(out)) {
-                o.write(httpBytes(base + f, null));
+            // pictures never change under the same name: reuse the copy we already have
+            File have = new File(contentDir(), f);
+            if (f.startsWith("img/") && have.isFile() && have.length() > 0) {
+                try (InputStream in = new java.io.FileInputStream(have); OutputStream o = new FileOutputStream(out)) { pipe(in, o); }
+            } else {
+                try (OutputStream o = new FileOutputStream(out)) {
+                    o.write(httpBytes(base + f, null));
+                }
+            }
+            if (report && (i % 5 == 0 || i == n - 1)) {
+                progress((i + 1) * 100 / n, "⏳ بنزّل الكلمات والصور… " + (i + 1) + " / " + n, false, false);
             }
         }
         if (!new File(tmp, "index.html").exists()) return false;

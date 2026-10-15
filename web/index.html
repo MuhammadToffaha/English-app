@@ -274,6 +274,7 @@ a.lnk{color:var(--blue);font-weight:800}
         <div class="bar2" id="updBar" hidden><i></i></div>
         <div class="row"><button class="btn" id="installUpd" hidden>⬇️ نزّل وثبّت النسخة الجديدة</button></div>
         <p class="note">الكلمات والشكل بيتحدّثوا لوحدهم كل ما التطبيق يتفتح. النسخة الجديدة من التطبيق نفسه محتاجة تثبيت.</p>
+        <p class="note">🆘 لو التحديث علق: <a class="lnk" href="https://github.com/MuhammadToffaha/English-app/releases/latest/download/kalimat.apk">⬇️ نزّل التطبيق مباشرة</a></p>
       </div>
     </div>
   </section>
@@ -731,11 +732,11 @@ a.lnk{color:var(--blue);font-weight:800}
   $("optExAr").onchange=function(){ S.exAr=this.checked; saveS(); };
 
   // ---------- updates (Android app) ----------
-  var apkUrl=null;
+  var apkUrl=null, updTimer=null;
   function setStatus(t){ $("updStatus").textContent=t; }
   window.onUpdateInfo=function(info){
     if(typeof info==="string"){ try{info=JSON.parse(info)}catch(e){info={}} }
-    $("checkUpd").disabled=false;
+    $("checkUpd").disabled=false; clearTimeout(updTimer);
     var parts=[];
     if(info.error) parts.push("❌ "+info.error);
     if(info.content==="updated") parts.push("✅ الكلمات اتحدّثت");
@@ -752,7 +753,12 @@ a.lnk{color:var(--blue);font-weight:800}
   };
   window.showApkUpdate=function(url){ apkUrl=url; $("apkBanner").hidden=false; $("installUpd").hidden=false; };
   $("checkUpd").onclick=function(){
-    if(has("checkUpdates")){ this.disabled=true; setStatus("⏳ بدوّر…"); native.checkUpdates(); return; }
+    if(has("checkUpdates")){
+      var btn=this; btn.disabled=true; setStatus("⏳ بدوّر… (أول مرة ممكن ياخد دقيقتين)"); native.checkUpdates();
+      clearTimeout(updTimer);
+      updTimer=setTimeout(function(){ if(btn.disabled){ btn.disabled=false; setStatus("⌛ التحديث بياخد وقت. ممكن تستنى، أو تنزّل التطبيق الجديد مباشرة:"); showLink(); } }, 150000);
+      return;
+    }
     setStatus("ℹ️ النسخة دي من التطبيق قديمة. نزّل الجديدة من اللينك ده مرة واحدة، وبعدها التحديث هيبقى من جوه التطبيق.");
     showLink();
   };
