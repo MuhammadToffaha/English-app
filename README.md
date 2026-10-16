@@ -23,6 +23,8 @@ On launch the kid picks **Primary 3** or **Primary 4**, then types a page number
 - 🔊 tap the speaker or the picture to hear the word; 🗣️ to hear the example
 - 🧠 **10 words a day** (home card): mostly words the kid got wrong before + words from the last unit opened; quiz + spelling mixed. Finish it → 🔥 days-in-a-row streak and a new sticker 🎁. A word leaves the review list after two right answers.
 - ✍️ **Spelling**: every lesson and unit has ✍️ إملاء: hear the word, see the picture + Arabic, tap letter tiles in order (Primary 4 gets 2 extra trick letters). 💡 shows the next letter.
+- 🏆 **Leaderboard**: memorized words (right twice in a row, not on the review list) ranked against both kids and friendly game characters (🐣 5 … 👑 500); names editable; result screen shows rank-ups
+- 📣 **Encouragement**: after each answer a sparkle or "boing" + the voice says "Great job!" / "Nice try!"; 3, 5, 8… right in a row = 🔥 combo sound (switch off in ⚙️)
 - 🔔 **Sounds**: happy "ding" for a right answer, soft "wah-wah" for a wrong one; 80%+ on a test → 🎉 fanfare + cheering + confetti + "Hooray!"
 - 📝 **Tests**: every lesson has a test (12 questions) and every unit has a full test (20 questions): listen, picture, Arabic ↔ English, complete the sentence. Best score is saved with ⭐, and "🎯 retry mistakes" repeats only the wrong words
 - ⚙️ **Settings**: speed, pitch, which male voice, show/hide pictures · Arabic · examples, and **🔄 check for updates / install the new version**
