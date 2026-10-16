@@ -335,7 +335,6 @@ a.lnk{color:var(--blue);font-weight:800}
         <label class="tog"><input type="checkbox" id="optAr"> 🔤 المعنى بالعربي</label>
         <label class="tog"><input type="checkbox" id="optEx"> 💬 الأمثلة</label>
         <label class="tog"><input type="checkbox" id="optExAr"> 🇪🇬 ترجمة الأمثلة بالعربي</label>
-        <label class="tog"><input type="checkbox" id="optCheer"> 📣 كلام تشجيع بعد كل إجابة</label>
       </div>
 
       <div class="panel">
@@ -876,23 +875,16 @@ a.lnk{color:var(--blue);font-weight:800}
       noise(c,t+0.3,0.7,0.08,2400);
     }catch(e){}
   }
-  var GOOD=["Great job!","Awesome!","You're a star!","Super!","Well done!","Fantastic!","Perfect!","Brilliant!","Good thinking!","Yes! You got it!"];
-  var TRY=["Nice try!","Don't give up!","You can do it!","Almost! Keep going!","Good try! Listen again.","Keep trying, you're learning!"];
-  function pickOne(a){ return a[Math.floor(Math.random()*a.length)]; }
   function afterAnswer(q, right, spoken){
     stopSpeech();
     Q.streak = right ? (Q.streak||0)+1 : 0;
     var combo = right && [3,5,8,12,16,20].indexOf(Q.streak)>=0;
     setTimeout(function(){ if(combo) comboSfx(); else cheerSfx(right); }, 380);
     if(combo){ var cd=document.createElement("div"); cd.className="combo"; cd.textContent="🔥 x"+Q.streak; var card=document.querySelector("#quizBody .qcard"); if(card) card.appendChild(cd); }
-    var talk = S.cheer!==false;
-    var phrase = combo ? (Q.streak+" in a row! Amazing!") : pickOne(right?GOOD:TRY);
     function next(){ setTimeout(function(){ if(view==="quiz" && Q && Q.items[Q.i]===q){ Q.i++; renderQ(); } }, right?400:1100); }
     setTimeout(function(){
       if(view!=="quiz" || !Q || Q.items[Q.i]!==q) return;
-      (talk ? say(phrase).then(function(){ return wait(150); }) : Promise.resolve())
-        .then(function(){ if(view==="quiz" && Q && Q.items[Q.i]===q) return say(spoken); })
-        .then(next);
+      say(spoken).then(next);
     }, combo?1100:850);
   }
   function hooray(){
@@ -1055,8 +1047,7 @@ a.lnk{color:var(--blue);font-weight:800}
     var uu=Q.unit, back=document.createElement("button"); back.className="chip"; back.textContent= uu ? "↩ رجوع للوحدة" : "↩ رجوع"; back.onclick=function(){ if(uu) showUnit(uu.id); else renderHome(); }; row.appendChild(back);
     r.appendChild(row);
     b.appendChild(r);
-    if(pct>=80){ hooray(); setTimeout(function(){ if(view==="quiz") say("Hooray! Excellent!"); }, 1700); }
-    else if(pct>=60) say("Well done!");
+    if(pct>=80) hooray();
   }
   $("quizExit").onclick=function(){ if(Q&&Q.unit) showUnit(Q.unit.id); else renderHome(); };
 
@@ -1077,7 +1068,6 @@ a.lnk{color:var(--blue);font-weight:800}
   function renderSettings(){
     $("rate").value=S.rate; $("rateVal").textContent=S.rate.toFixed(2)+"×";
     $("pitch").value=S.pitch; $("pitchVal").textContent=S.pitch.toFixed(2);
-    $("optCheer").checked=S.cheer!==false;
     $("optImg").checked=S.img; $("optAr").checked=S.ar; $("optEx").checked=S.ex; $("optExAr").checked=S.exAr!==false;
     fillVoices();
     var ver = has("version") ? native.version() : (native ? "1.1" : "متصفح");
@@ -1095,7 +1085,6 @@ a.lnk{color:var(--blue);font-weight:800}
   $("optAr").onchange=function(){ S.ar=this.checked; saveS(); };
   $("optEx").onchange=function(){ S.ex=this.checked; saveS(); };
   $("optExAr").onchange=function(){ S.exAr=this.checked; saveS(); };
-  $("optCheer").onchange=function(){ S.cheer=this.checked; saveS(); };
 
   // ---------- updates (Android app) ----------
   var apkUrl=null, updTimer=null;
