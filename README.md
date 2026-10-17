@@ -4,10 +4,11 @@
 
 Vocabulary helper for **El-Moasser English · First Term 2027**, two books in one app:
 
+- 🐣 **Primary 1** (222 words, 6 units + starter)
 - 🌱 **Primary 3** (457 words, 6 units + starter)
 - 🚀 **Primary 4** (666 words, 6 units + starter + review)
 
-On launch the kid picks **Primary 3** or **Primary 4**, then types a page number and sees that page's words in book order, each with an Arabic meaning, one simple example with its Arabic translation, and a 🔊 button that speaks it with a calm, slow American man's voice.
+On launch the kid picks **Primary 1**, **Primary 3** or **Primary 4**, then types a page number and sees that page's words in book order, each with an Arabic meaning, one simple example with its Arabic translation, and a 🔊 button that speaks it with a calm, slow American man's voice.
 
 ## 📱 Install on the tablet
 
@@ -42,7 +43,7 @@ New APKs are always signed with the same key (`android/app/kalimat.jks`), so the
 
 ## ✏️ Adding or fixing words
 
-Edit `web/data/pages3.js` (Primary 3) or `web/data/pages.js` (Primary 4). Each page is the **printed** page number of that grade's book:
+Edit `web/data/pages1.js` (Primary 1), `web/data/pages3.js` (Primary 3) or `web/data/pages.js` (Primary 4). Each page is the **printed** page number of that grade's book:
 
 ```js
 "23": [

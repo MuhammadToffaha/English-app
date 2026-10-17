@@ -57,13 +57,14 @@ h2{margin:0;font-size:1.4rem;line-height:1.3;text-wrap:balance}
 /* grade picker */
 .hello{text-align:center;display:flex;flex-direction:column;gap:4px;margin-top:8px}
 .hello .hi{font:600 2.4rem var(--en);color:var(--blue);direction:ltr}
-.grades{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:18px}
+.grades{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
 .gcard{background:var(--card);border:4px solid var(--line);border-radius:30px;padding:26px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .gcard .gic{font-size:4rem;line-height:1}
 .gcard .gnum{font:600 4.2rem var(--en);line-height:1;color:var(--ink)}
 .gcard .gen{font:600 1.5rem var(--en);direction:ltr}
 .gcard .gar{font-weight:800;font-size:1.25rem;color:var(--muted)}
 .gcard .cnt{font-size:1rem;color:var(--blue);font-weight:700}
+.gcard.g1{border-color:var(--sun)}.gcard.g1 .gnum{color:#e8590c}
 .gcard.g3{border-color:var(--green)}.gcard.g3 .gnum{color:var(--green)}
 .gcard.g4{border-color:var(--blue)}.gcard.g4 .gnum{color:var(--blue)}
 .gcard.last{box-shadow:0 0 0 5px var(--sun)}
@@ -395,6 +396,7 @@ a.lnk{color:var(--blue);font-weight:800}
 </div>
 
 <script src="data/pages.js"></script>
+<script src="data/pages1.js"></script>
 <script src="data/pages3.js"></script>
 <script>
 (function(){
@@ -402,6 +404,7 @@ a.lnk{color:var(--blue);font-weight:800}
   var APP = "English for Boudy & Anoos";
   // one book per grade; Primary 4 keeps its old ids/keys so saved scores stay
   var GRADES = [
+    {id:"p1", n:"1", en:"Primary 1", ar:"أولى ابتدائي", icon:"🐣", book:window.BOOK1},
     {id:"p3", n:"3", en:"Primary 3", ar:"تالتة ابتدائي", icon:"🌱", book:window.BOOK3},
     {id:"p4", n:"4", en:"Primary 4", ar:"رابعة ابتدائي", icon:"🚀", book:window.BOOK}
   ].filter(function(g){ return g.book && g.book.pages; });
