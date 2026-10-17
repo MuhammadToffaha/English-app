@@ -327,9 +327,17 @@ public class MainActivity extends Activity {
             if (f.startsWith("img/") && have.isFile() && have.length() > 0) {
                 try (InputStream in = new java.io.FileInputStream(have); OutputStream o = new FileOutputStream(out)) { pipe(in, o); }
             } else {
-                try (OutputStream o = new FileOutputStream(out)) {
-                    o.write(httpBytes(base + f, null));
+                // a weak connection must not cancel the whole update: retry, and a missing picture is skipped
+                byte[] data = null;
+                for (int t = 0; t < 3 && data == null; t++) {
+                    try { data = httpBytes(base + f, null); }
+                    catch (IOException e) { try { Thread.sleep(800L * (t + 1)); } catch (InterruptedException ignored) { } }
                 }
+                if (data == null) {
+                    if (f.startsWith("img/")) continue;
+                    throw new IOException("failed " + f);
+                }
+                try (OutputStream o = new FileOutputStream(out)) { o.write(data); }
             }
             if (report && (i % 5 == 0 || i == n - 1)) {
                 progress((i + 1) * 100 / n, "⏳ بنزّل الكلمات والصور… " + (i + 1) + " / " + n, false, false);
