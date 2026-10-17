@@ -178,6 +178,26 @@ a.lnk{color:var(--blue);font-weight:800}
 .qcard{position:relative}
 .gcard .known{font-size:.95rem;color:var(--green);font-weight:800}
 
+/* word card actions */
+.acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.act{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font:800 1rem var(--ar);display:inline-flex;align-items:center;gap:6px}
+.act.memo.on{background:#e3f6ea;border-color:var(--green);color:var(--green)}
+.act.say.good{border-color:var(--green)}
+.w.memorized{border-color:var(--green)}
+/* say-it window */
+.saybox{align-items:center;text-align:center}
+.saybox .qimg{max-height:150px}
+.sayword{font:600 2.6rem var(--en);direction:ltr;line-height:1.2}
+.sayar{color:var(--muted);font-size:1.15rem}
+.sayrow{display:flex;gap:18px;justify-content:center;align-items:center}
+.mic{width:110px;height:110px;border-radius:50%;border:none;background:var(--margin);color:#fff;font-size:3.2rem;transition:transform .09s;box-shadow:0 0 0 0 rgba(228,106,106,.5)}
+.mic.live{animation:ring 1.2s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(228,106,106,.55)}100%{box-shadow:0 0 0 26px rgba(228,106,106,0)}}
+.saystat{font-weight:800;font-size:1.2rem;min-height:1.6em}
+.saystat.ok{color:var(--green)}.saystat.bad{color:var(--margin)}
+.sayheard{font:500 1.3rem var(--en);direction:rtl;unicode-bidi:plaintext;color:var(--muted);min-height:1.4em}
+.saystars{font-size:2.4rem;letter-spacing:4px;min-height:1.2em}
+
 /* spelling */
 .qar.sm{font-size:1.5rem}
 .qplay.small{width:84px;height:84px;font-size:2.4rem}
@@ -351,6 +371,22 @@ a.lnk{color:var(--blue);font-weight:800}
   </section>
 </main>
 
+<div class="pad" id="sayBox" hidden>
+  <div class="padbox saybox">
+    <div id="sayPic"></div>
+    <div class="sayword" id="sayWord"></div>
+    <div class="sayar" id="sayAr"></div>
+    <div class="sayrow">
+      <button class="spk" id="sayListen" aria-label="اسمع">🔊</button>
+      <button class="mic" id="sayMic" aria-label="قول الكلمة">🎤</button>
+    </div>
+    <div class="saystars" id="sayStars"></div>
+    <div class="saystat" id="sayStat"></div>
+    <div class="sayheard" id="sayHeard"></div>
+    <div class="testsrow" style="justify-content:center"><button class="chip" id="sayNext" hidden>التالية ←</button><button class="chip" id="sayClose">✖ إغلاق</button></div>
+  </div>
+</div>
+
 <div class="pad" id="pad" hidden>
   <div class="padbox">
     <div class="padshow" id="padShow"></div>
@@ -499,10 +535,17 @@ a.lnk{color:var(--blue);font-weight:800}
         '<span class="word">'+esc(w.w)+'</span>'+
         '<button class="spk" aria-label="انطق">🔊</button>'+
         (w.ar?'<span class="ar">'+esc(w.ar)+'</span>':'')+
-        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+(w.exAr?'<span class="exar">'+esc(w.exAr)+'</span>':'')+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'');
+        (w.ex?'<div class="ex"><p>'+mark(w.ex,w.w)+(w.exAr?'<span class="exar">'+esc(w.exAr)+'</span>':'')+'</p><button class="spk2" aria-label="انطق المثال">🗣️</button></div>':'')+
+        '<div class="acts"><button class="act say">🎤 قولها بصوتك</button><button class="act memo"></button></div>';
       li.querySelector(".spk").onclick=function(){ stopSpeech(); flash(li); say(w.w); };
       var pic=li.querySelector(".pic"); if(pic){ pic.onclick=function(){ stopSpeech(); flash(li); say(w.w); }; pic.onerror=function(){ pic.remove(); }; }
       var b2=li.querySelector(".spk2"); if(b2) b2.onclick=function(){ stopSpeech(); flash(li); say(w.ex); };
+      var mb=li.querySelector(".memo");
+      function paintMemo(){ var on=isMemorized(w); mb.classList.toggle("on",on); li.classList.toggle("memorized",on); mb.textContent= on ? "✅ حفظتها" : "⬜ حفظتها؟"; }
+      mb.onclick=function(){ var on=toggleMine(w); paintMemo(); if(on){ tone(true); } };
+      paintMemo();
+      var sb=li.querySelector(".say"); if(getPron()[wkey(w)]>=2) sb.classList.add("good");
+      sb.onclick=function(){ stopSpeech(); openSay(w, words.filter(function(x){return x}), function(){ paintMemo(); if(getPron()[wkey(w)]>=2) sb.classList.add("good"); }); };
       li._w=w; ol.appendChild(li);
     });
     return ol;
@@ -693,13 +736,134 @@ a.lnk{color:var(--blue);font-weight:800}
     // right answers in a row per word: 2+ and not on the review list = memorized
     var kn=getKnown(); kn[k] = right ? (kn[k]||0)+1 : 0; if(!kn[k]) delete kn[k];
     store(gk("known"), JSON.stringify(kn));
+    if(!right){ var mine=getMineOf(G.id); if(mine[k]){ delete mine[k]; store(gk("mine"), JSON.stringify(mine)); } }
   }
   function getKnown(gid){ var key = gid ? (gid==="p4"?"known":gid+":known") : gk("known"); try{ return JSON.parse(load(key)||"{}")||{}; }catch(e){ return {}; } }
   function getMissOf(gid){ var key = gid==="p4"?"miss":gid+":miss"; try{ return JSON.parse(load(key)||"{}")||{}; }catch(e){ return {}; } }
+  function getMineOf(gid){ var key = gid==="p4"?"mine":gid+":mine"; try{ return JSON.parse(load(key)||"{}")||{}; }catch(e){ return {}; } }
   function memorizedOf(gid){
-    var kn=getKnown(gid), m=getMissOf(gid);
-    return Object.keys(kn).filter(function(k){ return kn[k]>=2 && !m[k]; });
+    var kn=getKnown(gid), m=getMissOf(gid), mine=getMineOf(gid), out={};
+    Object.keys(kn).forEach(function(k){ if(kn[k]>=2 && !m[k]) out[k]=1; });
+    Object.keys(mine).forEach(function(k){ out[k]=1; });
+    return Object.keys(out);
   }
+  function isMemorized(w){ return memorizedOf(G.id).indexOf(wkey(w))>=0; }
+  // ✅ button: mark / unmark by hand. Unmarking also clears the automatic count.
+  function toggleMine(w){
+    var k=wkey(w), mine=getMineOf(G.id), on=!isMemorized(w);
+    if(on){ mine[k]=1; } else { delete mine[k]; var kn=getKnown(); delete kn[k]; store(gk("known"), JSON.stringify(kn)); }
+    store(gk("mine"), JSON.stringify(mine));
+    return on;
+  }
+  function getPron(){ try{ return JSON.parse(load(gk("pron"))||"{}")||{}; }catch(e){ return {}; } }
+
+  // ---------- say it with your own voice ----------
+  function normSay(t){ return String(t).toLowerCase().replace(/[’`]/g,"'").replace(/[^a-z0-9' ]/g," ").replace(/\s+/g," ").trim(); }
+  function lev(a,b){
+    var m=a.length, n=b.length, d=[], i, j;
+    for(i=0;i<=m;i++){ d[i]=[i]; } for(j=0;j<=n;j++){ d[0][j]=j; }
+    for(i=1;i<=m;i++) for(j=1;j<=n;j++) d[i][j]=Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+    return d[m][n];
+  }
+  function targetsOf(w){
+    var parts=String(w.w).split(" / ").map(function(x){ return normSay(x.replace(/\.\.\.|…/g,"")); }).filter(Boolean);
+    return parts.length ? parts : [normSay(w.w)];
+  }
+  // 3 = said it exactly, 2 = very close, 0 = try again
+  function judge(w, results){
+    var tg=targetsOf(w), best=0, bestHeard=results[0]||"";
+    results.forEach(function(r, idx){
+      var h=normSay(r);
+      tg.forEach(function(t){
+        var sc=0;
+        if(h===t || (" "+h+" ").indexOf(" "+t+" ")>=0) sc = idx===0 ? 3 : 2;
+        else {
+          var hs=h.replace(/ /g,""), ts=t.replace(/ /g,""), dist=lev(hs,ts);
+          // close enough: 1 letter off for short words, about 1 in 5 letters for longer ones
+          if(dist===0) sc = idx===0 ? 3 : 2;
+          else if(dist <= (ts.length<=4 ? 1 : Math.floor(ts.length/5))) sc=2;
+        }
+        if(sc>best){ best=sc; bestHeard=r; }
+      });
+    });
+    return {score:best, heard:bestHeard};
+  }
+  var SAY={w:null, list:[], done:null, busy:false};
+  function hasMic(){ return has("listen") || !!(window.webkitSpeechRecognition||window.SpeechRecognition); }
+  function openSay(w, list, done){
+    SAY.w=w; SAY.list=list||[w]; SAY.done=done; SAY.busy=false;
+    $("sayPic").innerHTML = w.img ? '<img class="qimg" alt="" src="'+esc(w.img)+'">' : (w.emo ? '<div class="qemo">'+esc(w.emo)+'</div>' : '');
+    $("sayWord").textContent=w.w; $("sayAr").textContent=w.ar||"";
+    $("sayStars").textContent=""; $("sayHeard").textContent=""; $("sayNext").hidden=true;
+    setStat("🔊 اسمع الأول، وبعدين دوس 🎤 وقول الكلمة", "");
+    $("sayMic").classList.remove("live"); $("sayMic").style.transform="";
+    $("sayBox").hidden=false;
+    if(!hasMic()){ setStat("ℹ️ عشان الميكروفون يشتغل، نزّل النسخة الجديدة من التطبيق من ⚙️ الإعدادات", "bad"); }
+    setTimeout(function(){ say(w.w); }, 250);
+  }
+  function setStat(t, cls){ var e=$("sayStat"); e.textContent=t; e.className="saystat"+(cls?" "+cls:""); }
+  function closeSay(){
+    $("sayBox").hidden=true; stopSpeech();
+    if(has("stopListening")){ try{ native.stopListening(); }catch(e){} }
+    if(SAY.rec){ try{ SAY.rec.abort(); }catch(e){} }
+    SAY.busy=false; if(SAY.done) SAY.done();
+  }
+  function startMic(){
+    if(SAY.busy) return;
+    stopSpeech(); SAY.busy=true;
+    $("sayHeard").textContent=""; $("sayStars").textContent="";
+    setStat("⏳ استنى ثانية…", "");
+    if(has("listen")){ native.listen(); return; }
+    var R=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!R){ SAY.busy=false; setStat("ℹ️ نزّل النسخة الجديدة من التطبيق عشان الميكروفون يشتغل", "bad"); return; }
+    var rec=SAY.rec=new R(); rec.lang="en-US"; rec.maxAlternatives=5; rec.interimResults=false;
+    rec.onstart=function(){ window.onMicState("listening"); };
+    rec.onresult=function(e){ var r=[]; var res=e.results[0]; for(var i=0;i<res.length;i++) r.push(res[i].transcript); window.onHeard({results:r}); };
+    rec.onerror=function(e){ window.onHeard({error:e.error||"e"}); };
+    rec.onend=function(){ if(SAY.busy) setTimeout(function(){ if(SAY.busy) window.onHeard({error:"e7"}); }, 300); };
+    try{ rec.start(); }catch(e){ window.onHeard({error:"start-failed"}); }
+  }
+  window.onMicState=function(st){
+    if($("sayBox").hidden) return;
+    if(st==="listening"||st==="speaking"){ $("sayMic").classList.add("live"); setStat(st==="speaking"?"👂 بسمعك…":"🎤 قول الكلمة دلوقتي!", ""); }
+    else if(st==="thinking"){ $("sayMic").classList.remove("live"); setStat("🤔 بفكّر…", ""); }
+  };
+  window.onMicLevel=function(rms){ var s=1+Math.max(0,Math.min(10,(+rms||0)))/25; $("sayMic").style.transform="scale("+s.toFixed(2)+")"; };
+  window.onHeard=function(o){
+    if(typeof o==="string"){ try{ o=JSON.parse(o); }catch(e){ o={}; } }
+    if(!SAY.busy) return; SAY.busy=false;
+    $("sayMic").classList.remove("live"); $("sayMic").style.transform="";
+    if($("sayBox").hidden) return;
+    if(o.error){
+      var e=o.error, msg="🙉 ما سمعتش كويس. قرّب من التابلت ودوس 🎤 تاني";
+      if(e==="permission"||e==="e9"||e==="not-allowed") msg="🔒 اسمح للتطبيق يستخدم الميكروفون (من إعدادات التابلت) وجرّب تاني";
+      else if(e==="e2"||e==="e1"||e==="network") msg="📶 محتاج إنترنت، أو نزّل English (US) للتعرّف على الكلام بدون نت من إعدادات Google";
+      else if(e==="no-recognizer") msg="ℹ️ التابلت محتاج تطبيق Google عشان يسمع الكلام";
+      setStat(msg, "bad"); return;
+    }
+    var j=judge(SAY.w, o.results||[]), w=SAY.w;
+    $("sayHeard").textContent = j.heard ? "سمعتك: «"+j.heard+"»" : "";
+    var pr=getPron(), k=wkey(w);
+    if(j.score>=2){
+      $("sayStars").textContent = j.score===3 ? "⭐⭐⭐" : "⭐⭐";
+      setStat(j.score===3 ? "🌟 ممتاز! نطقك صح" : "👏 قريب جدًا! برافو", "ok");
+      tone(true); setTimeout(function(){ cheerSfx(true); }, 380);
+      pr[k]=Math.max(pr[k]||0, j.score); store(gk("pron"), JSON.stringify(pr));
+      noteAnswer(w, true);
+      var nx=nextSay(); $("sayNext").hidden=!nx;
+    } else {
+      $("sayStars").textContent="";
+      setStat("💪 قرّبت! اسمع تاني ببطء وقولها معايا", "bad");
+      tone(false);
+      setTimeout(function(){ say(w.w); }, 900);
+    }
+  };
+  function nextSay(){ var i=SAY.list.indexOf(SAY.w); return i>=0 && i<SAY.list.length-1 ? SAY.list[i+1] : null; }
+  $("sayMic").onclick=startMic;
+  $("sayListen").onclick=function(){ stopSpeech(); say(SAY.w.w); };
+  $("sayClose").onclick=closeSay;
+  $("sayNext").onclick=function(){ var nx=nextSay(); if(!nx) return; var d=SAY.done; if(d) d(); openSay(nx, SAY.list, d); };
+  $("sayBox").onclick=function(e){ if(e.target===$("sayBox")) closeSay(); };
 
   // ---------- leaderboard ----------
   var FRIENDS=[["🐣","Chicky",5],["🐢","Turtle Tim",15],["🐰","Bunny Bo",30],["🦊","Foxy",50],["🐼","Panda Pam",80],["🐬","Dolly Dolphin",120],["🦁","Leo the Lion",180],["🦉","Professor Owl",250],["🐉","Dino Dragon",350],["👑","King of Words",500]];
@@ -1181,6 +1345,7 @@ a.lnk{color:var(--blue);font-weight:800}
   // Android back button
   window.onAndroidBack=function(){
     if(!$("pad").hidden){ $("pad").hidden=true; return true; }
+    if(!$("sayBox").hidden){ closeSay(); return true; }
     if(view==="page"){ var u=unitOf(current); if(u){ showUnit(u.id,current); return true; } }
     if(view==="quiz"){ $("quizExit").click(); return true; }
     if(view==="board"){ renderHome(); return true; }

@@ -1,10 +1,12 @@
 package com.toffaha.kalimat;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInstaller;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
@@ -59,6 +64,10 @@ public class MainActivity extends Activity {
     private final Handler ui = new Handler(Looper.getMainLooper());
     private SharedPreferences prefs;
     private volatile boolean busyUpdating = false;
+    private SpeechRecognizer recognizer;
+    private boolean pendingListen = false;
+    private long lastLevel = 0;
+    static final int REQ_MIC = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -482,8 +491,78 @@ public class MainActivity extends Activity {
         });
     }
 
+    // ---------- the kid says the word: Android speech recognition, results go back to the page ----------
+    private void heard(JSONObject o) { js("onHeard", o); }
+    private void heardError(String code) {
+        try { heard(new JSONObject().put("error", code)); } catch (Exception ignored) { }
+    }
+
+    private void startListening() {
+        if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            pendingListen = true;
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQ_MIC);
+            return;
+        }
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) { heardError("no-recognizer"); return; }
+        if (tts != null) tts.stop();
+        if (recognizer != null) { try { recognizer.destroy(); } catch (Exception ignored) { } }
+        recognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        recognizer.setRecognitionListener(new RecognitionListener() {
+            @Override public void onReadyForSpeech(Bundle b) { micState("listening"); }
+            @Override public void onBeginningOfSpeech() { micState("speaking"); }
+            @Override public void onRmsChanged(float rms) {
+                long now = System.currentTimeMillis();
+                if (now - lastLevel < 90) return;
+                lastLevel = now;
+                final String code = "window.onMicLevel && window.onMicLevel(" + rms + ")";
+                web.evaluateJavascript(code, null);
+            }
+            @Override public void onBufferReceived(byte[] buffer) { }
+            @Override public void onEndOfSpeech() { micState("thinking"); }
+            @Override public void onError(int error) { heardError("e" + error); }
+            @Override public void onResults(Bundle b) {
+                try {
+                    ArrayList<String> list = b.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                    float[] conf = b.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
+                    JSONArray arr = new JSONArray();
+                    if (list != null) for (String r : list) arr.put(r);
+                    JSONObject o = new JSONObject().put("results", arr);
+                    if (conf != null && conf.length > 0) o.put("conf", (double) conf[0]);
+                    heard(o);
+                } catch (Exception e) { heardError("bad-result"); }
+            }
+            @Override public void onPartialResults(Bundle b) { }
+            @Override public void onEvent(int type, Bundle b) { }
+        });
+        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
+        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "en-US");
+        i.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5);
+        i.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false);
+        i.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+        // kids speak slowly: give them time before the recognizer gives up
+        i.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 1500L);
+        i.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 1500L);
+        try { recognizer.startListening(i); } catch (Exception e) { heardError("start-failed"); }
+    }
+
+    private void micState(String st) {
+        web.evaluateJavascript("window.onMicState && window.onMicState(" + JSONObject.quote(st) + ")", null);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+        if (requestCode != REQ_MIC) return;
+        boolean ok = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
+        if (ok && pendingListen) { pendingListen = false; startListening(); }
+        else { pendingListen = false; heardError("permission"); }
+    }
+
     @Override
     protected void onDestroy() {
+        if (recognizer != null) { try { recognizer.destroy(); } catch (Exception ignored) { } }
         if (tts != null) { tts.stop(); tts.shutdown(); }
         super.onDestroy();
     }
@@ -539,6 +618,16 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String version() {
             return BuildConfig.VERSION_NAME;
+        }
+
+        @JavascriptInterface
+        public void listen() {
+            ui.post(MainActivity.this::startListening);
+        }
+
+        @JavascriptInterface
+        public void stopListening() {
+            ui.post(() -> { if (recognizer != null) { try { recognizer.cancel(); } catch (Exception ignored) { } } });
         }
 
         @JavascriptInterface
