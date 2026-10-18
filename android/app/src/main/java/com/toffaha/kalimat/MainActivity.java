@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.media.AudioAttributes;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -99,6 +100,12 @@ public class MainActivity extends Activity {
                 int r = tts.setLanguage(Locale.US);
                 ttsReady = r != TextToSpeech.LANG_MISSING_DATA && r != TextToSpeech.LANG_NOT_SUPPORTED;
                 applyVoice();
+                // play speech as clean media audio (not call/assistant routing, which can sound hollow)
+                try {
+                    tts.setAudioAttributes(new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build());
+                } catch (Exception ignored) { }
                 tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
                     @Override public void onStart(String id) { }
                     @Override public void onDone(String id) { notifyDone(); }
@@ -585,9 +592,11 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void speak(String text, float rate, float pitch) {
             if (tts == null || !ttsReady) { notifyDone(); return; }
-            tts.setSpeechRate(rate <= 0 ? 0.7f : rate);
-            tts.setPitch(pitch <= 0 ? 0.9f : pitch);
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, new Bundle(), "k" + System.nanoTime());
+            tts.setSpeechRate(rate <= 0 ? 0.75f : rate);
+            tts.setPitch(pitch <= 0 ? 1f : pitch);
+            Bundle p = new Bundle();
+            p.putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, 1.0f);
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, p, "k" + System.nanoTime());
         }
 
         @JavascriptInterface

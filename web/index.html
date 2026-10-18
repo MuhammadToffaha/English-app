@@ -31,6 +31,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:4px solid 
   padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
 .tbtn{width:56px;height:56px;border-radius:18px;border:none;background:rgba(255,255,255,.18);color:#fff;font-size:1.7rem;flex:none}
 .tbtn.on{background:var(--sun);color:var(--ink)}
+.tbtn.hold{background:var(--sun);transform:scale(1.12);transition:transform .9s}
+/* kid mode: big touch targets */
+.w{cursor:pointer}
+.act{padding:10px 18px;font-size:1.1rem;min-height:52px}
+.act.say{background:#fdecec;border-color:var(--margin)}
+.tbtn2{min-height:56px;font-size:1.15rem;padding:10px 20px}
+.lhead .tbtns{display:flex;gap:10px;flex-wrap:wrap}
+.chip{min-height:48px}
+.opt{min-height:84px;font-size:1.6rem}
+.tile{width:72px;height:72px;font-size:2.2rem}
+.findbig{padding:12px;font-size:1.25rem}
 .ttl{flex:1;min-width:0;text-align:center;font-weight:800;font-size:1.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .wrap{max-width:1100px;margin:0 auto;padding-block:16px 80px;
@@ -264,7 +275,7 @@ a.lnk{color:var(--blue);font-weight:800}
 <header class="top">
   <div class="topin">
     <button class="tbtn" id="homeBtn" aria-label="الرئيسية">🏠</button>
-    <button class="tbtn" id="padBtn" aria-label="ابحث برقم الصفحة">🔢</button>
+    <button class="tbtn back" id="backBtn" aria-label="رجوع">↩️</button>
     <div class="ttl" id="ttl">📖 English for Boudy &amp; Anoos</div>
     <button class="tbtn" id="setBtn" aria-label="الإعدادات">⚙️</button>
   </div>
@@ -342,8 +353,8 @@ a.lnk{color:var(--blue);font-weight:800}
 
       <div class="panel">
         <h3>🗣️ الصوت</h3>
-        <div class="row"><label for="rate">⚡ السرعة</label><span class="rg"><span aria-hidden="true">🐢</span><input type="range" id="rate" min="0.4" max="1.1" step="0.05"><span aria-hidden="true">🐇</span></span><span class="val" id="rateVal"></span></div>
-        <div class="row"><label for="pitch">🎵 طبقة الصوت</label><span class="rg"><span aria-hidden="true">🔉</span><input type="range" id="pitch" min="0.6" max="1.1" step="0.05"><span aria-hidden="true">🔊</span></span><span class="val" id="pitchVal"></span></div>
+        <div class="row"><label for="rate">⚡ السرعة</label><span class="rg"><span aria-hidden="true">🐢</span><input type="range" id="rate" min="0.55" max="1.1" step="0.05"><span aria-hidden="true">🐇</span></span><span class="val" id="rateVal"></span></div>
+        <div class="row"><label for="pitch">🎵 طبقة الصوت</label><span class="rg"><span aria-hidden="true">🔉</span><input type="range" id="pitch" min="0.9" max="1.1" step="0.05"><span aria-hidden="true">🔊</span></span><span class="val" id="pitchVal"></span></div>
         <p class="note">👨 صوت راجل أمريكاني، هادي وبطيء</p>
         <div class="row"><label for="voiceSel">🎙️ الصوت</label><select id="voiceSel"></select></div>
         <p class="note" id="voiceNote"></p>
@@ -422,13 +433,13 @@ a.lnk{color:var(--blue);font-weight:800}
 
   // ---------- settings ----------
   // voice: American man, calm and slow
-  var DEF = {rate:0.6, pitch:0.9, gender:"male", voice:"", img:true, ar:true, ex:true, exAr:true, v:3};
+  var DEF = {rate:0.75, pitch:1, gender:"male", voice:"", img:true, ar:true, ex:true, exAr:true, v:4};
   var S = Object.assign({}, DEF);
   var saved={};
   try{ saved=JSON.parse(localStorage.getItem("settings")||"{}")||{}; }catch(e){}
   Object.assign(S, saved); S.gender="male";
   // older versions saved a faster voice: start everyone on the calm, slow man's voice once
-  if(saved.v!==3){ S.rate=DEF.rate; S.pitch=DEF.pitch; S.v=3; try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} }
+  if(saved.v!==4){ S.rate=DEF.rate; S.pitch=DEF.pitch; S.v=4; try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} }
   S.gender="male";
   function saveS(){ try{ localStorage.setItem("settings", JSON.stringify(S)); }catch(e){} applyView(); }
   function applyView(){
@@ -475,9 +486,8 @@ a.lnk{color:var(--blue);font-weight:800}
   // when the chosen voice cannot sound male, a lower pitch gets close
   function effPitch(){
     var vs=listVoices(), cur=pickVoice(), v=vs.filter(function(x){return x.name===cur})[0];
-    var p = S.pitch;
-    if((!v || !v.male) && p > 0.75) p = 0.72;
-    return p;
+    // pitch-shifting makes Android voices sound echoey/robotic: keep the voice's natural pitch
+    return Math.min(1.1, Math.max(0.9, S.pitch||1));
   }
 
   // ---------- speech ----------
@@ -485,7 +495,7 @@ a.lnk{color:var(--blue);font-weight:800}
   window.__ttsDone = function(){ var f = doneCb; doneCb = null; if(f) f(); };
   function speakable(t){ return String(t).replace(/\s*\/\s*/g,", ").replace(/\s*=\s*/g,", ").replace(/\.\.\.|…/g," ").replace(/\+/g," ").replace(/\s+/g," ").trim(); }
   // short words get a little slower than sentences, so kids learning English hear every sound
-  function rateFor(text){ return text.split(" ").length<=3 ? Math.max(0.4, S.rate*0.9) : S.rate; }
+  function rateFor(text){ return S.rate; }
   function say(text){
     text = speakable(text); var rt=rateFor(text);
     return new Promise(function(res){
@@ -549,6 +559,7 @@ a.lnk{color:var(--blue);font-weight:800}
       paintMemo();
       var sb=li.querySelector(".say"); if(getPron()[wkey(w)]>=2) sb.classList.add("good");
       sb.onclick=function(){ stopSpeech(); openSay(w, words.filter(function(x){return x}), function(){ paintMemo(); if(getPron()[wkey(w)]>=2) sb.classList.add("good"); }); };
+      li.addEventListener("click", function(e){ if(e.target.closest("button")) return; if(e.target.closest(".ex")){ stopSpeech(); flash(li); say(w.ex); return; } stopSpeech(); flash(li); say(w.w); });
       li._w=w; ol.appendChild(li);
     });
     return ol;
@@ -580,6 +591,7 @@ a.lnk{color:var(--blue);font-weight:800}
     ["Grade","Home","Unit","Page","Set","Quiz","Board"].forEach(function(n){ $("v"+n).hidden = (n.toLowerCase()!==v); });
     $("homeBtn").classList.toggle("on", v==="grade");
     $("setBtn").classList.toggle("on", v==="set");
+    $("backBtn").style.visibility = v==="grade" ? "hidden" : "visible";
     window.scrollTo(0,0);
   }
 
@@ -1065,7 +1077,7 @@ a.lnk{color:var(--blue);font-weight:800}
     setTimeout(function(){
       if(view!=="quiz" || !Q || Q.items[Q.i]!==q) return;
       say(spoken).then(next);
-    }, combo?1100:850);
+    }, combo?1500:1250);   // let the sound finish first so it never mixes with the voice
   }
   function hooray(){
     try{
@@ -1325,10 +1337,19 @@ a.lnk{color:var(--blue);font-weight:800}
     $("keys").appendChild(b);
   });
   function openPad(){ typed=""; $("padShow").textContent="؟"; $("pad").hidden=false; }
-  $("pnum").onclick=openPad; $("padBtn").onclick=openPad; $("findBig").onclick=openPad;
+  $("pnum").onclick=openPad; $("findBig").onclick=openPad;
+  $("backBtn").onclick=function(){ stopSpeech(); window.onAndroidBack(); };
   $("pad").onclick=function(e){ if(e.target===$("pad")) $("pad").hidden=true; };
   $("homeBtn").onclick=renderGrades;
-  $("setBtn").onclick=function(){ if(view==="set"){ if(G) renderHome(); else renderGrades(); } else renderSettings(); };
+  // ⚙️ is for parents: hold it for 1 second (kids tapping by mistake don't land in settings)
+  (function(){
+    var b=$("setBtn"), t=null, fired=false;
+    function start(e){ fired=false; clearTimeout(t); b.classList.add("hold"); t=setTimeout(function(){ fired=true; b.classList.remove("hold"); renderSettings(); }, 900); }
+    function end(){ clearTimeout(t); b.classList.remove("hold"); }
+    b.addEventListener("touchstart", start, {passive:true}); b.addEventListener("mousedown", start);
+    ["touchend","touchcancel","mouseup","mouseleave"].forEach(function(ev){ b.addEventListener(ev, end); });
+    b.onclick=function(){ if(fired) return; if(view==="set"){ if(G) renderHome(); else renderGrades(); return; } toast("⚙️ للأهل: اضغط مطوّلًا"); };
+  })();
 
   // ---------- grade picker ----------
   function renderGrades(){
