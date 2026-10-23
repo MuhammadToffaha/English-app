@@ -31,6 +31,9 @@ jobs:
             adb logcat -d -v brief AndroidRuntime:E chromium:E *:S > crash.txt || true
             adb logcat -d -v brief | grep -iE "kalimat|FATAL|AndroidRuntime" | tail -150 > app.txt || true
             adb shell screencap -p /sdcard/s.png && adb pull /sdcard/s.png s.png || true
+            ( adb shell pidof com.toffaha.kalimat >/dev/null && echo "::notice::APP RUNNING after 25s" ) || echo "::error::APP NOT RUNNING after 25s"
+            head -40 crash.txt | while IFS= read -r l; do echo "::warning::$l"; done
+            grep -iE "Exception|Error|FATAL|chromium.*Uncaught|Console" app.txt | head -30 | while IFS= read -r l; do echo "::warning::$l"; done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
