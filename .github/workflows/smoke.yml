@@ -1,0 +1,41 @@
+name: Smoke test (emulator)
+
+# Installs the latest built APK on an Android emulator, opens it and reports crashes from logcat.
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+      - name: Download latest APK
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: gh release download --repo ${{ github.repository }} --pattern '*.apk' --output app.apk
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: |
+            adb install -r app.apk
+            adb logcat -c
+            adb shell monkey -p com.toffaha.kalimat -c android.intent.category.LAUNCHER 1
+            sleep 25
+            adb shell pidof com.toffaha.kalimat || echo "APP NOT RUNNING"
+            adb logcat -d -v brief AndroidRuntime:E chromium:E *:S > crash.txt || true
+            adb logcat -d -v brief | grep -iE "kalimat|FATAL|AndroidRuntime" | tail -150 > app.txt || true
+            adb shell screencap -p /sdcard/s.png && adb pull /sdcard/s.png s.png || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke
+          path: |
+            crash.txt
+            app.txt
+            s.png
