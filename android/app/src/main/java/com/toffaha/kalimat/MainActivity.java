@@ -273,8 +273,9 @@ public class MainActivity extends Activity {
                     info.put("apk", apk);
                     if (apk.optBoolean("newer")) {
                         final String url = apk.optString("url");
+                        final String ver = apk.optString("version");
                         ui.post(() -> web.evaluateJavascript(
-                                "window.showApkUpdate && window.showApkUpdate(" + JSONObject.quote(url) + ")", null));
+                                "window.showApkUpdate && window.showApkUpdate(" + JSONObject.quote(url) + "," + JSONObject.quote(ver) + ")", null));
                     }
                 }
             } catch (Exception ignored) { }
@@ -296,7 +297,7 @@ public class MainActivity extends Activity {
                 final JSONObject apk = info.optJSONObject("apk");
                 if (apk != null && apk.optBoolean("newer")) {
                     ui.postDelayed(() -> web.evaluateJavascript(
-                            "window.showApkUpdate && window.showApkUpdate(" + JSONObject.quote(apk.optString("url")) + ")", null), 2500);
+                            "window.showApkUpdate && window.showApkUpdate(" + JSONObject.quote(apk.optString("url")) + "," + JSONObject.quote(apk.optString("version")) + ")", null), 2500);
                 }
             } else if (fromUser) {
                 js("onUpdateInfo", info);
@@ -382,7 +383,7 @@ public class MainActivity extends Activity {
         }
         JSONObject o = new JSONObject();
         o.put("newer", latest > BuildConfig.VERSION_CODE && url != null);
-        o.put("version", "1." + latest);
+        o.put("version", "1.0." + latest);
         o.put("url", url == null ? "" : url);
         return o;
     }

@@ -282,6 +282,12 @@ a.lnk{color:var(--blue);font-weight:800}
 </header>
 
 <main class="wrap">
+  <div class="pad" id="updPop" hidden><div class="padbox" style="text-align:center;align-items:center">
+    <div style="font-size:44px;line-height:1">🎁</div>
+    <b id="updPopT" style="font-size:20px">في تحديث جديد! 🎉</b>
+    <div class="note">نسخة أحدث من التطبيق جاهزة — حدّث دلوقتي عشان تاخد آخر الكلمات والمميزات.</div>
+    <div class="row" style="width:100%;gap:8px"><button class="btn green" id="updPopGo" style="flex:1">⬇️ حدّث دلوقتي</button><button class="btn" id="updPopLater" style="flex:1">بعدين</button></div>
+  </div></div>
   <div class="banner" id="apkBanner" hidden><span>🆕 في نسخة جديدة من التطبيق</span><button id="apkBannerBtn">⬇️ حدّث</button></div>
 
   <!-- GRADE PICKER (first screen) -->
@@ -1305,7 +1311,14 @@ a.lnk{color:var(--blue);font-weight:800}
     if(p.message) setStatus(p.message);
     if(p.done||p.error){ $("installUpd").disabled=false; }
   };
-  window.showApkUpdate=function(url){ apkUrl=url; $("apkBanner").hidden=false; $("installUpd").hidden=false; };
+  window.showApkUpdate=function(url,ver){
+    apkUrl=url; $("apkBanner").hidden=false; $("installUpd").hidden=false;
+    // 🎁 small pop-up once per app start
+    var seen=false; try{ seen=sessionStorage.getItem("updPop")===String(url); sessionStorage.setItem("updPop", String(url)); }catch(e){}
+    if(!seen && !window.__updPopShown){ window.__updPopShown=true; $("updPopT").textContent="في تحديث جديد"+(ver?" "+ver:"")+" 🎉"; $("updPop").hidden=false; }
+  };
+  $("updPopLater").onclick=function(){ $("updPop").hidden=true; };
+  $("updPopGo").onclick=function(){ $("updPop").hidden=true; renderSettings(); startInstall(); };
   $("checkUpd").onclick=function(){
     if(has("checkUpdates")){
       var btn=this; btn.disabled=true; setStatus("⏳ بدوّر… (أول مرة ممكن ياخد دقيقتين)"); native.checkUpdates();
