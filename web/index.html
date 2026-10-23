@@ -380,6 +380,7 @@ a.lnk{color:var(--blue);font-weight:800}
         <p class="note" id="silentNote"></p>
         <p class="note">🆘 لو التحديث علق: <a class="lnk" href="https://github.com/MuhammadToffaha/English-app/releases/latest/download/kalimat.apk">⬇️ نزّل التطبيق مباشرة</a></p>
       </div>
+      <p class="note credit" style="text-align:center;opacity:.7;margin:14px 0 4px">Designed by Muhammad Toffaha</p>
     </div>
   </section>
 </main>
@@ -1267,7 +1268,7 @@ a.lnk{color:var(--blue);font-weight:800}
     var ver = has("version") ? native.version() : (native ? "1.1" : "متصفح");
     var sil = has("silentUpdates") && native.silentUpdates();
     $("silentNote").textContent = sil
-      ? "🤫 التحديث الصامت شغّال: النسخة الجديدة بتتنزّل لوحدها وبتتثبّت لما الطفل يقفل التطبيق، من غير ما يسأل (أول مرة بس ممكن يطلب موافقة)."
+      ? "🤫 التحديث الصامت شغّال: بيدوّر على نسخة جديدة كل يوم، بتتنزّل لوحدها وبتتثبّت من غير ما يسأل (أول مرة بس ممكن يطلب موافقة)."
       : (has("silentUpdates") ? "🔓 عشان التحديث الصامت يشتغل: اسمح للتطبيق «بتثبيت التطبيقات» مرة واحدة (دوس «نزّل وثبّت» وهيوديك للإعداد). محتاج Android 12 أو أحدث." : "");
     $("verInfo").textContent="📱 نسخة التطبيق: "+ver+" · "+GRADES.map(function(g){ var ns=numsOf(g.book.pages); return "📚 "+g.en+": "+ns.length+" صفحة · "+ns.reduce(function(s,p){return s+g.book.pages[p].length},0)+" كلمة"; }).join(" · ");
     $("ttl").textContent="الإعدادات";

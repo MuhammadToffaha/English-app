@@ -125,6 +125,7 @@ public class MainActivity extends Activity {
         installBundledIfNeeded();
         loadPage();
         new Thread(() -> runUpdateCheck(false)).start();
+        DailyUpdateJob.schedule(this);   // 🤫 also once a day in the background, app closed
         handleInstallIntent(getIntent());
     }
 
