@@ -3,6 +3,8 @@ package com.toffaha.kalimat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInstaller;
@@ -119,6 +121,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        cleanupPending();
         installBundledIfNeeded();
         loadPage();
         new Thread(() -> runUpdateCheck(false)).start();
@@ -274,6 +277,7 @@ public class MainActivity extends Activity {
                     }
                 }
             } catch (Exception ignored) { }
+            if (!fromUser) prepareSilentUpdate(info.optJSONObject("apk"));
             try {
                 boolean changed = updateContent(fromUser);
                 info.put("content", changed ? "updated" : "same");
@@ -404,6 +408,7 @@ public class MainActivity extends Activity {
                 PackageInstaller.SessionParams params =
                         new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
                 params.setAppPackageName(getPackageName());
+                if (Build.VERSION.SDK_INT >= 31) params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED);
                 int id = pi.createSession(params);
                 try (PackageInstaller.Session session = pi.openSession(id)) {
                     try (OutputStream out = session.openWrite("kalimat.apk", 0, apk.length)) {
@@ -423,6 +428,78 @@ public class MainActivity extends Activity {
             }
         }).start();
     }
+
+    // ---------- silent self-update ----------
+    // The new APK downloads in the background; it installs when the kid leaves the app (or on next launch),
+    // without any question, once Android allows it (Android 12+, and the app installed itself at least once).
+    private File pendingApk() { return new File(getFilesDir(), "update.apk"); }
+    private volatile boolean resumed = false;
+
+    private void prepareSilentUpdate(JSONObject apk) {
+        try {
+            if (apk == null || !apk.optBoolean("newer")) { cleanupPending(); return; }
+            if (Build.VERSION.SDK_INT < 31) return;
+            if (!getPackageManager().canRequestPackageInstalls()) return;
+            int ver = Integer.parseInt(apk.optString("version").replaceAll(".*\\.", ""));
+            File f = pendingApk();
+            if (!(f.isFile() && prefs.getInt("pendingVer", -1) == ver)) {
+                byte[] data = httpBytes(apk.optString("url"), null);
+                try (OutputStream o = new FileOutputStream(f)) { o.write(data); }
+                prefs.edit().putInt("pendingVer", ver).putBoolean("needsConfirm", false).apply();
+            }
+            if (!resumed) installPendingSilently();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void cleanupPending() {
+        File f = pendingApk();
+        if (f.exists() && prefs.getInt("pendingVer", -1) <= BuildConfig.VERSION_CODE) {
+            f.delete();
+            prefs.edit().remove("pendingVer").remove("needsConfirm").apply();
+        }
+    }
+
+    private void installPendingSilently() {
+        File f = pendingApk();
+        if (Build.VERSION.SDK_INT < 31 || !f.isFile()) return;
+        if (prefs.getInt("pendingVer", -1) <= BuildConfig.VERSION_CODE) { cleanupPending(); return; }
+        if (prefs.getBoolean("needsConfirm", false)) return;   // Android wants a tap: the banner handles it
+        new Thread(() -> {
+            try {
+                PackageInstaller pi = getPackageManager().getPackageInstaller();
+                PackageInstaller.SessionParams params =
+                        new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+                params.setAppPackageName(getPackageName());
+                params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED);
+                int id = pi.createSession(params);
+                try (PackageInstaller.Session session = pi.openSession(id)) {
+                    try (InputStream in = new java.io.FileInputStream(f);
+                         OutputStream out = session.openWrite("kalimat.apk", 0, f.length())) {
+                        pipe(in, out);
+                        session.fsync(out);
+                    }
+                    Intent i = new Intent(this, SilentUpdateReceiver.class);
+                    int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE;
+                    PendingIntent pending = PendingIntent.getBroadcast(this, 9, i, flags);
+                    session.commit(pending.getIntentSender());
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+        }).start();
+    }
+
+    /** Result of a silent install. If Android insists on a tap, remember it and show the update banner next time. */
+    public static class SilentUpdateReceiver extends BroadcastReceiver {
+        @Override public void onReceive(Context c, Intent intent) {
+            int status = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -999);
+            if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
+                c.getSharedPreferences("kalimat", MODE_PRIVATE).edit().putBoolean("needsConfirm", true).apply();
+            }
+        }
+    }
+
+    @Override protected void onResume() { super.onResume(); resumed = true; }
+    @Override protected void onPause() { super.onPause(); resumed = false; }
+    @Override protected void onStop() { super.onStop(); installPendingSilently(); }
 
     private void handleInstallIntent(Intent intent) {
         if (intent == null || !ACTION_INSTALL_STATUS.equals(intent.getAction())) return;
@@ -630,6 +707,11 @@ public class MainActivity extends Activity {
             chosenVoice = name == null ? "" : name;
             prefs.edit().putString("voice", chosenVoice).apply();
             applyVoice();
+        }
+
+        @JavascriptInterface
+        public boolean silentUpdates() {
+            return Build.VERSION.SDK_INT >= 31 && getPackageManager().canRequestPackageInstalls();
         }
 
         @JavascriptInterface

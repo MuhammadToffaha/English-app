@@ -37,7 +37,7 @@ On launch the kid picks **Primary 1**, **Primary 3** or **Primary 4**, then type
 | You change | You push to `main` | The app |
 |---|---|---|
 | `web/data/pages.js` / `pages3.js` (words) or `web/index.html` (look) | ✅ | Downloads it on next launch, no reinstall |
-| anything in `android/` | ✅ | GitHub Actions builds a new APK release; the app shows "🆕 new version" and installs it from ⚙️ Settings |
+| anything in `android/` | ✅ | GitHub Actions builds a new APK release; the app downloads it in the background and installs it **silently** when the kid leaves the app (Android 12+, after the app has installed itself once; otherwise it shows "🆕 new version") |
 
 New APKs are always signed with the same key (`android/app/kalimat.jks`), so they install over the old one and keep the kid's progress.
 
